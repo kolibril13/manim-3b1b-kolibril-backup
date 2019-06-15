@@ -1,5 +1,5 @@
 from manimlib.imports import *
-from active_hendrik.resusable_hendrik.histograms import *
+from hendrik_active.resusable_hendrik.histograms import *
 from coins_in_array import *
 class Coin_Fipping(Scene):
     def construct(self):

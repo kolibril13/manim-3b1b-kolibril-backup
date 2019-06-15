@@ -1,7 +1,7 @@
 from manimlib.imports import *
 
 import numpy as np
-from active_hendrik.resusable_hendrik.histograms import *
+from hendrik_active.resusable_hendrik.histograms import *
 ##Histogram like this:
 ## 0   2    2     1 ....
 #0   1    2    3    4 ...... 255...  256

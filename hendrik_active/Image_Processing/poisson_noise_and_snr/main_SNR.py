@@ -1,6 +1,6 @@
 from manimlib.imports import *
 
-from active_projects.eop.reusables.histograms import *
+from hendrik_active.resusable_hendrik.histograms import *
 
 class poisson_and_snr(Scene):
     def construct(self):
@@ -15,5 +15,5 @@ class poisson_and_snr(Scene):
 
 if __name__ == "__main__": 
     module_name = os.path.basename(__file__)
-    command = "python3.7 -m manim  -a -p  " + module_name
+    command = "python3.7 -m manim   -p  " + module_name + " poisson_and_snr"
     os.system(command) 
