@@ -11,7 +11,7 @@ class Fermat(Scene):
 
     def rot_Texobject(self,text,line):
         word = TexMobject(text)
-        word.next_to(ORIGIN, UP, SMALL_BUFF)
+        word.next_to(ORIGIN, UP, SMALL_BUFF*1)
         word.rotate(line.get_angle(), about_point=ORIGIN)
         word.shift(line.get_center())
         return word
