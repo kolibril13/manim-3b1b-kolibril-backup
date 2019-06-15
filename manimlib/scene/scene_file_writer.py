@@ -62,9 +62,9 @@ class SceneFileWriter(object):
         if self.write_to_movie:
             movie_dir = guarantee_existence(os.path.join(
                 consts.VIDEO_DIR,
-                module_directory,
-                scene_name,
-                self.get_resolution_directory(),
+                # module_directory, HENDRIK
+                # scene_name,
+                # self.get_resolution_directory(),
             ))
             self.movie_file_path = os.path.join(
                 movie_dir,

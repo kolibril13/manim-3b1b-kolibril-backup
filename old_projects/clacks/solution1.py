@@ -14,6 +14,7 @@ class FromPuzzleToSolution(MovingCameraScene):
 
         rects = VGroup(ScreenRectangle(), ScreenRectangle())
         rects.set_height(3)
+        rects.set_height(3)
         rects.arrange(RIGHT, buff=2)
 
         titles = VGroup(

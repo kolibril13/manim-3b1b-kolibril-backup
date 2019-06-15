@@ -142,6 +142,7 @@ class Scene(Container):
         self.update_frame()
         self.set_camera(Camera(self.get_frame()))
         self.clear()
+
     ###
 
     def update_mobjects(self, dt):
@@ -176,6 +177,7 @@ class Scene(Container):
                 for family in families
             ])
             return num_families == 1
+
         return list(filter(is_top_level, mobjects))
 
     def get_mobject_family_members(self):
@@ -236,6 +238,7 @@ class Scene(Container):
                     add_safe_mobjects_from_list(mob.submobjects, intersect)
                 else:
                     new_mobjects.append(mob)
+
         add_safe_mobjects_from_list(mobjects, set(to_remove))
         return new_mobjects
 
@@ -404,6 +407,7 @@ class Scene(Container):
             func(self, *args, **kwargs)
             self.file_writer.end_animation(allow_write)
             self.num_plays += 1
+
         return wrapper
 
     def begin_animations(self, animations):

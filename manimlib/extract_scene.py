@@ -96,6 +96,7 @@ def get_scenes_to_render(scene_classes, config):
         print(manimlib.constants.NO_SCENE_MESSAGE)
         return []
     if config["write_all"]:
+        print(scene_classes)
         return scene_classes
     result = []
     for scene_name in config["scene_names"]:

@@ -219,6 +219,13 @@ COLOR_MAP = {
     "PINK": "#D147BD",
     "GREEN_SCREEN": "#00FF00",
     "ORANGE": "#FF862F",
+    "DRAC_GREY": "#2B2B2B",
+    "DRAC_GREY_LIGHT": "#808080",
+    "DRAC_YELLOW": "#FFC66D",
+    "DRAC_YELLOW_GREEN": "#A5C261",
+    "DRAC_ORANGE": "#CC7832",
+    "DRAC_GREEN": "#6A8759",
+    "DRAC_LILA": "#9876AA",
 }
 PALETTE = list(COLOR_MAP.values())
 locals().update(COLOR_MAP)

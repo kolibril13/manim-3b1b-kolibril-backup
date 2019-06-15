@@ -32,7 +32,6 @@ class Intro(Scene):
             run_time = 3
         )
 
-
 class IntroduceSteve(Scene):
     def construct(self):
         name = TextMobject("Steven Strogatz")
@@ -85,6 +84,7 @@ class IntroduceSteve(Scene):
         for logo in logos:
             self.play(FadeIn(logo))
         self.wait()
+
 
 class ShowTweets(Scene):
     def construct(self):
@@ -541,6 +541,12 @@ class CondensedVersion(Scene):
             Transform(snells, condensed, run_time = 2)
         ))
         self.wait()
+
+if __name__ == "__main__":
+    module_name = os.path.basename(__file__)
+    command_A = "manim -p  -c '#2B2B2B' --video_dir ~/Downloads/  "
+    command_B = module_name + " " + scene
+    os.system(command_A + command_B)
 
 
 

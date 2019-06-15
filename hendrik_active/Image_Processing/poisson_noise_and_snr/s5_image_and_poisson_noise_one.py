@@ -8,27 +8,27 @@ class Poisson_noise(Scene):
         poission_With_one_pixel=[]
         text_for_the_images= []
         histograms= []
-        rep_rate=1
-        photon_intensities= range(1,400)
+        rep_rate=4
+        photon_intensities= [1,5,10,50,200,500]
+
         # rep_rate=2
         # photon_intensities=[1]
         #
         max = 256
+        i=1
+        photons_val=
+        img=create_poission_noise_ball(num_photons=photons_val)
+        print(img)
+        img[img > max-1]=max-1
+        img = np.uint(img)
+        print(img)
+        im_sctretched=IPcontraststretch(img)
+        poission_With_one_pixel.append(im_sctretched)
+        text_for_the_images.append(str(photons_val))
 
-
-        for photons_val in photon_intensities:
-            for i in range(0,rep_rate):
-                 img=create_poission_noise_ball(num_photons=photons_val)
-                 img[img > max-1]=max-1
-                 im_sctretched=IPcontraststretch(img)
-                 poission_With_one_pixel.append(im_sctretched)
-                 text_for_the_images.append(str(photons_val))
-
-                 val = np.histogram(img, bins=[i for i in np.arange(0, max + 1)])
-                 hist = Image_Histogram(val[1], val[0], x_scale=4 / max, y_scale=3/val[0].max())
-                 histograms.append(hist)
-                 print(photons_val)
-
+        val = np.histogram(img, bins=[i for i in np.arange(0, max + 1)])
+        hist = Image_Histogram(val[1], val[0], x_scale=4 / max, y_scale=3/val[0].max())
+        histograms.append(hist)
         poission_With_one_pixel_ALL= [ImageMobject(img_a).scale(2.5) for img_a in poission_With_one_pixel]
 
         for PLOT,text,hist in zip(poission_With_one_pixel_ALL,text_for_the_images,histograms):
@@ -49,7 +49,7 @@ class Poisson_noise(Scene):
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command = "manim -p --leave_progress_bars " + module_name + " Poisson_noise"
+    command = "python3.7  -m manim  -sl -p --leave_progress_bars " + module_name + " Poisson_noise"
     os.system(command)
 
 

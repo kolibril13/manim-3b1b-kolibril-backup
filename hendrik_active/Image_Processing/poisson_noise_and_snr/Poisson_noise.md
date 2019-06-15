@@ -18,10 +18,10 @@ And when can we actually capture good pictures?
 ## Szene 2
 Lets consider this exerimental setup: a constant light source, a directed light beam to the right side, where we assume that 
 * light goes only in z direction (no transverse  light component in x or y direction )
-* The light source is an exendend plane (e.g.can be thought of as an arry 32x32 LEDs), which emits 10 photons per second per squarecentimeter.
+* The light source is an exendend plane (e.g.can be thought of as an arry 32x32 LEDs), which emits exactly 10 photons per second per squarecentimeter.
 * the detector is perfect and can detect every single photon.
 
---> When we read now the signal from all detctors, we would recive an image that looks dirctly like the original.
+--> When we read now the signal from all detctors, we would recive an image that looks perfectly like the original.
 > 1 Experimental setup with all equal
 
 Now we can also introduce the histogram of the image, on the x-axis we see the intensity of the pixel (from 0 to 255) and on the y axis the amount of pixels that have this discrete value.

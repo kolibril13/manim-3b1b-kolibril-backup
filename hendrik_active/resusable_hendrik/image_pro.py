@@ -14,12 +14,15 @@ def create_poission_noise_ball(num_photons=100):
     shot_noise_img = num_photons * img_origin
     shot_noise_img = circ(shot_noise_img, 75, circle_opacity=0.1)
     shot_noise = np.random.poisson(shot_noise_img, (num_pixels, num_pixels))
-    return np.uint8(shot_noise)
+    return shot_noise
 
 
 def IPcontraststretch(image):
     image = np.asarray(image)
     M = image.max()
     m = image.min()
+    if m == M:
+        print("yess")
+        return np.uint8(image*0+255)
     stretched_img = (256 - 1) / (M - m) * (image - m)
     return np.uint8(stretched_img)
