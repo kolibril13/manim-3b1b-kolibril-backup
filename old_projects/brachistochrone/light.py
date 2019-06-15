@@ -53,17 +53,15 @@ class PhotonScene(Scene):
         photon.set_color(color)
         return ShowPassingFlash(photon, **kwargs)
 
-
 class SimplePhoton(PhotonScene):
     def construct(self):
         text = TextMobject("Light")
         text.to_edge(UP)
-        self.play(ShimmerIn(text))
+        self.play(FadeIn(text))
         self.play(self.photon_run_along_path(
             Cycloid(), rate_func=linear
         ))
         self.wait()
-
 
 class MultipathPhotonScene(PhotonScene):
     CONFIG = {
@@ -170,6 +168,8 @@ class PhotonOffMirror(MultipathPhotonScene):
             ).ingest_submobjects()
             for anchor_point, end_point in zip(anchor_points, end_points)
         ]
+
+scene= "PhotonsInWater"
 
 class PhotonsInWater(MultipathPhotonScene):
     def construct(self):
@@ -915,11 +915,11 @@ class StateSnellsLaw(PhotonScene):
         self.wait()
         
 
-
-
-
-
-
+if __name__ == "__main__":
+    module_name = os.path.basename(__file__)
+    command_A = "manim -p  -c '#2B2B2B' --video_dir ~/Downloads/  "
+    command_B = module_name + " " + scene
+    os.system(command_A + command_B)
 
 
 
