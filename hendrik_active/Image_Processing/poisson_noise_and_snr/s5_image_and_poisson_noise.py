@@ -9,7 +9,7 @@ class Poisson_noise(Scene):
         text_for_the_images= []
         histograms= []
         rep_rate=1
-        photon_intensities= range(1,400)
+        photon_intensities= range(1,2)
         # rep_rate=2
         # photon_intensities=[1]
         #
@@ -36,7 +36,7 @@ class Poisson_noise(Scene):
             PLOT.to_edge(LEFT)
             self.add(PLOT)
             print(text)
-            t_2= TexMobject(r"\text{Rate of incident photons: }" + text +  r"\, \frac{\text{photon}}{s}")
+            t_2= TexMobject(r"\text{Photonenrate: }" + text +  r"\, \frac{\text{photons}}{s}")
             t_2.next_to(PLOT,DOWN)
             t_2.to_edge(LEFT)
             self.add(t_2)
@@ -49,7 +49,7 @@ class Poisson_noise(Scene):
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command = "manim -p --leave_progress_bars " + module_name + " Poisson_noise"
+    command = "manim -p -s --leave_progress_bars " + module_name + " Poisson_noise"
     os.system(command)
 
 

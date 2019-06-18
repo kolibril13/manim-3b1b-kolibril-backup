@@ -16,7 +16,7 @@ class Poisson_noise(Scene):
         #
         max = 256
         i=1
-        photons_val=
+        photons_val=100
         img=create_poission_noise_ball(num_photons=photons_val)
         print(img)
         img[img > max-1]=max-1
@@ -28,20 +28,25 @@ class Poisson_noise(Scene):
 
         val = np.histogram(img, bins=[i for i in np.arange(0, max + 1)])
         hist = Image_Histogram(val[1], val[0], x_scale=4 / max, y_scale=3/val[0].max())
+
         histograms.append(hist)
         poission_With_one_pixel_ALL= [ImageMobject(img_a).scale(2.5) for img_a in poission_With_one_pixel]
 
         for PLOT,text,hist in zip(poission_With_one_pixel_ALL,text_for_the_images,histograms):
-            self.clear()
+            #self.clear()
             PLOT.to_edge(LEFT)
-            self.add(PLOT)
-            print(text)
+            brace1=Brace(PLOT,RIGHT)
+            eq_text1 = brace1.get_text("512 Pixel")
+            text2= TextMobject("512 Pixel")
             t_2= TexMobject(r"\text{Rate of incident photons: }" + text +  r"\, \frac{\text{photon}}{s}")
             t_2.next_to(PLOT,DOWN)
             t_2.to_edge(LEFT)
             self.add(t_2)
             hist.to_edge(RIGHT)
+            bgr = Square().surround(hist)
+            self.add(bgr)
             self.add(hist)
+
             print(text)
             self.wait(0.33)
 

@@ -1,5 +1,16 @@
 #Possion Noise, SNR and the brilliance of human eyes
 
+Ideas: for who is this video?
+Science interested people, who must not have a physiciscist background
+Which language?
+First of all German, but in more general in english.
+How long?
+about 5 minutes.
+
+
+
+
+
 ## Szene 1
 
 Let's see too images:
