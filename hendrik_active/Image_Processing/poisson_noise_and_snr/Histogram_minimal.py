@@ -18,5 +18,5 @@ class MinimalHist(Scene):
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command = "python3.7 -m manim -c '#2B2B2B' -p -s  " + module_name + " MinimalHist"
+    command = "manim -c '#2B2B2B' -p -s  " + module_name + " MinimalHist"
     os.system(command)

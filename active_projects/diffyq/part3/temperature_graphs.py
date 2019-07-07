@@ -1,7 +1,7 @@
 from scipy import integrate
 
 from manimlib.imports import *
-from active_projects.ode.part2.heat_equation import *
+from active_projects.diffyq.part2.heat_equation import *
 
 
 class TemperatureGraphScene(SpecialThreeDScene):
@@ -2828,3 +2828,11 @@ class Thumbnail(ShowHarmonicSurfaces):
         self.update_mobjects(0)
         self.surface.set_stroke(width=0.1)
         self.surface.set_fill(opacity=0.2)
+
+
+if __name__ == "__main__":
+    module_name = os.path.basename(__file__)
+    command_A = "manim -p -s -c '#2B2B2B' --video_dir ~/Downloads/  "
+    command_B = module_name + " " + "SimpleCosExpGraph"
+    os.system(command_A + command_B)
+
