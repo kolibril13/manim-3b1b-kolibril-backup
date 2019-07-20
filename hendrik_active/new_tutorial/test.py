@@ -1,24 +1,22 @@
 from manimlib.imports import *
 
-REGISTERED_CLASSES = []
-
-def render(cls):
-    REGISTERED_CLASSES.append(cls.__name__)
-    return cls
-
-@render
-class My_Scene(Scene):
+class Example(Scene):
     def construct(self):
-        dot= Dot()
-        self.play(Write(dot))
+        scale_fac=10
+        dot = Dot()
+        dot2=Dot().move_to(LEFT)
+        line = Line(dot.get_center(),dot2.get_center())
+        line.set_stroke(width=2)
+        a=VGroup(dot,dot2,line)
+        b=a.copy()
+        b.scale(scale_factor=scale_fac)
+        b.set_stroke(width=2*scale_fac)
+        b.shift(DOWN)
+        self.add(a,b)
 
-@render
-class My_Scene2(Scene):
-    def construct(self):
-        dot= Dot()
-        self.add(dot)
-
-
+    
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    os.system("manim -pl " + module_name + " " + " ".join(REGISTERED_CLASSES))
+    command_A = "manim -p -s    -c '#2B2B2B' --video_dir ~/Downloads/  "
+    command_B = module_name +" " +"lalll"
+    os.system(command_A + command_B)
