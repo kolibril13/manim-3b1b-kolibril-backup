@@ -2,14 +2,14 @@ from manimlib.imports import *
 from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FLOWER import FLOWER
 
 scenes= ["MiniFixedKScene","FixedKScene", "MovingKScene", "FilterkScene" ]
-global FACTOR
-FACTOR=0.7
+global k_plane_size
+k_plane_size=0.7
 class K_Space(VMobject):
     CONFIG = {
         "Pixel":2,
         "pixel_len":23,
         "mushroom_heigt":1.1,
-        "magic_offset_z":FACTOR
+        "magic_offset_z":k_plane_size
 
     }
     def __init__(self , **kwargs):
@@ -64,14 +64,15 @@ class K_Space(VMobject):
 
     def set_phase_flowers(self, img_kamp, img_kph):
         t_objects = [t for t in self.term.submobjects]
-        flower_array=img_kamp
-        flower_array = flower_array.flatten()
+        img_kamp = img_kamp.flatten()
+        img_kph = img_kph.flatten()
         # create dots array
         self.flows = VGroup()
         for i, el in enumerate(t_objects):
-            wanted_heightx = flower_array[i] / 255 * self.mushroom_heigt
+            wanted_heightx = img_kamp[i] / 255 * self.mushroom_heigt
             # set height
-            dot = FLOWER(flower_array[i]).scale(0.21)
+            # dot = FLOWER(img_kph[i]).scale(0.21)
+            dot = FLOWER(img_kph[i]).scale(0.51) # for special cases
             dot.move_to(el.get_center()+OUT*wanted_heightx)
             # append the pixels
             self.flows.add(dot)
@@ -144,7 +145,7 @@ class Realspace(VMobject):
         "Pixel": 2,
         "pixel_len": 23,
         "mushroom_heigt": 1.1,
-        "magic_offset_z": FACTOR
+        "magic_offset_z": k_plane_size
 
     }
 
@@ -168,7 +169,7 @@ class Realspace(VMobject):
         img_real = img_real.flatten()
         #interpolate the colors from array
         for i, el in enumerate(t_objects):
-            el.set_color(interpolate_color(BLACK, WHITE, img_real[i] / 255))
+            el.set_color(interpolate_color(BLACK, WHITE, img_real[i] / img_real.max()))
 
 
 ############ ANIMATION START
@@ -178,16 +179,41 @@ class MiniFixedK_scene(ThreeDScene):  # with real plane on the right
         self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
         self.camera.frame_center.shift(2 * OUT)
 
-        # setup the sizes
-        pixels = 7
+        pixels = 7  # setup the sizes
         raster_size= (pixels,pixels)
-        # setup function
-        r = np.random.uniform(0, 255, (pixels, pixels))
-        # phi_rad = np.random.uniform(0, 2 * np.pi, (pixels, pixels))
-        phi_rad= np.full((pixels, pixels), 5)
-        img_k_space = r * np.exp(1j * phi_rad)
+        r = np.random.uniform(0, 255, raster_size) # setup function
+        phi_rad= np.full(raster_size, 5)
+        img_k_space = r * np.exp(1j * phi_rad) # phi_rad must be in radians!
         img_kamp = np.abs(img_k_space)
         img_kph = (np.angle(img_k_space, deg=True))
+
+        k_plane = K_Space(pixel_len=pixels)   # setup the k_plane
+        k_plane.set_x(0)
+        k_plane.set_y(0)
+        # k_plane.set_z(0.01) ## why again?
+        k_plane.fill_k_space(img_kamp=img_kamp, dots_lines=True)
+        k_plane.set_phase_flowers(img_kamp=img_kamp, img_kph=img_kph)
+        k_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
+        k_plane.set_shade_in_3d(True)
+        self.add(k_plane)
+
+class FixedKScene_OUT(ThreeDScene):  # with real plane on the right (forier transform)
+    def construct(self):
+        self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
+        self.camera.frame_center.shift(2 * OUT)
+        pixels = 7  # setup the sizes
+        raster_size = (pixels, pixels)
+        r= np.zeros(raster_size, dtype=complex)
+        # phi_rad = np.random.uniform(0, 2 * np.pi, (pixels, pixels))
+        img_k_space = r
+        img_k_space[2,5]= 255*np.exp(1j*2/3*np.pi)
+        print(img_k_space)
+        img_kamp = np.abs(img_k_space)
+        img_kph = (np.angle(img_k_space, deg=True))
+        # calculate realspace
+        k_space_ar_shift = np.fft.ifftshift(img_k_space)
+        real_out_ar = np.fft.ifft2(k_space_ar_shift)
+        print(abs(real_out_ar.real))
 
         # setup the k_plane
         k_plane = K_Space(pixel_len=pixels)
@@ -196,13 +222,18 @@ class MiniFixedK_scene(ThreeDScene):  # with real plane on the right
         k_plane.set_z(0.01)
         k_plane.fill_k_space(img_kamp=img_kamp, dots_lines=True)
         k_plane.set_phase_flowers(img_kamp=img_kamp, img_kph=img_kph)
-        k_plane.scale_about_point(9 / pixels * FACTOR, ORIGIN)
+        k_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
         k_plane.set_shade_in_3d(True)
         self.add(k_plane)
 
+        # setup the real_out_plane
+        real_out_plane = Realspace(pixel_len=pixels)
+        real_out_plane.fill_real_space(img_real=abs(real_out_ar))
+        real_out_plane.scale(9 / pixels * k_plane_size * 0.4).to_edge(UR)
+        all2 = real_out_plane
+        self.add_fixed_in_frame_mobjects(all2)
 
-
-class FixedKScene_OUT(ThreeDScene):  # with real plane on the right
+class FixedKScene_OUT_random(ThreeDScene):  # with real plane on the right (forier transform)
     def construct(self):
         self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
         self.camera.frame_center.shift(2 * OUT)
@@ -218,6 +249,7 @@ class FixedKScene_OUT(ThreeDScene):  # with real plane on the right
         # calculate realspace
         k_space_ar_shift = np.fft.ifftshift(img_k_space)
         real_out_ar = np.fft.ifft2(k_space_ar_shift)
+        print(abs(real_out_ar))
 
         # setup the k_plane
         k_plane = K_Space(pixel_len=pixels)
@@ -226,17 +258,16 @@ class FixedKScene_OUT(ThreeDScene):  # with real plane on the right
         k_plane.set_z(0.01)
         k_plane.fill_k_space(img_kamp=img_kamp, dots_lines=True)
         k_plane.set_phase_flowers(img_kamp=img_kamp, img_kph=img_kph)
-        k_plane.scale_about_point(9 / pixels * FACTOR, ORIGIN)
+        k_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
         k_plane.set_shade_in_3d(True)
         self.add(k_plane)
 
         # setup the real_out_plane
         real_out_plane = Realspace(pixel_len=pixels)
-        real_out_plane.fill_real_space(img_real=real_out_ar.real)
-        real_out_plane.scale(9 / pixels * FACTOR * 0.4).to_edge(UR)
+        real_out_plane.fill_real_space(img_real=abs(real_out_ar))
+        real_out_plane.scale(9 / pixels * k_plane_size * 0.4).to_edge(UR)
         all2 = real_out_plane
         self.add_fixed_in_frame_mobjects(all2)
-
 
 
 
@@ -266,7 +297,7 @@ class FixedKScene(ThreeDScene): # with real plane on the left
         UPFACTOR = 0.5
         r = Realspace(pixel_len=pixels)
         r.fill_real_space(img_real=img)
-        r.scale(9 / pixels * FACTOR * UPFACTOR).to_edge(UL)
+        r.scale(9 / pixels * k_plane_size * UPFACTOR).to_edge(UL)
         self.add_fixed_in_frame_mobjects(r)
 
         my_plane = K_Space(pixel_len=pixels)
@@ -275,7 +306,7 @@ class FixedKScene(ThreeDScene): # with real plane on the left
         my_plane.set_x(0)
         my_plane.set_y(0)
         my_plane.set_z(0)
-        my_plane.scale_about_point(9 / pixels * FACTOR, ORIGIN)
+        my_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
         my_plane.fill_k_space(img_kamp=fourier_s, dots_lines=True)
         my_plane.set_phase_flowers(fourier_s,fourier_s)
         my_plane.set_shade_in_3d(True)
@@ -314,7 +345,7 @@ class FilterkScene(ThreeDScene):
         UPFACTOR = 0.5
         r = Realspace(pixel_len=pixels)
         r.fill_real_space(img_real=img)
-        r.scale(9 / pixels * FACTOR * UPFACTOR).to_edge(UL)
+        r.scale(9 / pixels * k_plane_size * UPFACTOR).to_edge(UL)
         self.add_fixed_in_frame_mobjects(r)
 
         my_plane = K_Space(pixel_len=pixels)
@@ -323,7 +354,7 @@ class FilterkScene(ThreeDScene):
         my_plane.set_x(0)
         my_plane.set_y(0)
         my_plane.set_z(0)
-        my_plane.scale_about_point(9 / pixels * FACTOR, ORIGIN)
+        my_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
         my_plane.fill_k_space(img_kamp=fourier_s, dots_lines=True)
         #my_plane.set_phase_flowers(fourier_s, fourier_s)
         my_plane.set_shade_in_3d(True)
@@ -341,7 +372,7 @@ class FilterkScene(ThreeDScene):
         my_plane2= K_Space(pixel_len=pixels)
         my_plane2.set_x(0)
         my_plane2.set_y(0)
-        my_plane2.scale_about_point(9 / pixels, ORIGIN)
+        my_plane2.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
         my_plane2.fill_k_space(img_kamp=img2, dots_lines=True)
         self.play(Transform(magic_plane,magic_gauss),
                    Transform(my_plane,my_plane2),run_time=1)
@@ -357,7 +388,7 @@ class spare_things(ThreeDScene): ### often used camera positions, etc.
         pass
 
 
-
+scene="FixedKScene_OUT"
 # if scene == scenes[0] or scenes[1]:
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
