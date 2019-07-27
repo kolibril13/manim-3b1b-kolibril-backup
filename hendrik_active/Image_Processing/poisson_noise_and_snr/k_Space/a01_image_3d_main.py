@@ -1,6 +1,5 @@
 from manimlib.imports import *
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FLOWER import FLOWER
-import cmath
+from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.super_Flower import FLOWER
 
 global FACTOR
 FACTOR=0.7
@@ -27,20 +26,20 @@ class K_Space(VMobject):
         self.term.add(*square_ALL)
         self.add(self.term)
 
-    def fill_k_space(self, k_amp_ar, dots_lines=False):
+    def fill_k_space(self, img_array, dots_lines=False):
         t_objects = [t for t in self.term.submobjects]
-        k_amp_ar = k_amp_ar.flatten()
+        img_array = img_array.flatten()
 
         # create dots array
         self.dots = VGroup()
         self.lines = VGroup()
         for i, el in enumerate(t_objects):
             # interpol_col
-            wanted_color = interpolate_color(BLACK, WHITE, k_amp_ar[i] / 255)
+            wanted_color = interpolate_color(BLACK, WHITE, img_array[i] / 255)
             el.set_color(wanted_color)
 
             if dots_lines == True:
-                wanted_height = k_amp_ar[i] / 255 * self.mushroom_heigt
+                wanted_height = img_array[i]/255*self.mushroom_heigt
 
                 # set height
                 dot = Dot()
@@ -62,21 +61,18 @@ class K_Space(VMobject):
             self.add(self.dots)
             self.add(self.lines)
 
-    def set_phase_flowers(self,amp_array,phase_array):
+    def set_phase_flowers(self,flower_array):
         t_objects = [t for t in self.term.submobjects]
-        amp_array = amp_array.flatten()
-        phase_array=phase_array.flatten()
+        flower_array = flower_array.flatten()
         # create dots array
         self.flows = VGroup()
         for i, el in enumerate(t_objects):
-            wanted_heightx = amp_array[i] / 255 * self.mushroom_heigt
-            flow = FLOWER(phase_array[i])
-            # flow.scale(0.21)
-            flow.scale(0.5)
-            flow.move_to(el.get_center()+OUT*wanted_heightx)
-
+            wanted_heightx = flower_array[i] / 255 * self.mushroom_heigt
+            # set height
+            dot = FLOWER(flower_array[i]).scale(0.21)
+            dot.move_to(el.get_center()+OUT*wanted_heightx)
             # append the pixels
-            self.flows.add(flow)
+            self.flows.add(dot)
         self.add(self.flows)
 
 
@@ -165,62 +161,88 @@ class Realspace(VMobject):
         self.term.add(*square_ALL)
         self.add(self.term)
 
-    def fill_real_space(self, real_ar):
+    def fill_real_space(self, img_array):
         t_objects = [t for t in self.term.submobjects]
-        real_ar = real_ar.flatten()
+        img_array = img_array.flatten()
         #interpolate the colors from array
         for i, el in enumerate(t_objects):
-            el.set_color(interpolate_color(BLACK, WHITE, real_ar[i] / 255))
+            el.set_color(interpolate_color(BLACK,WHITE, img_array[i]/255))
 
 
 
 class lala(ThreeDScene):
-    CONFIG = {
-        "flower_value_start": 0,
-        "flower_value_end": 360*3
-    }
 
     def construct(self):
+        #axes:
+        pixels= 9
+        # img= np.uint8(np.random.randint(1, 255, (pixels,pixels)))
+        img = np.uint8(np.fromfunction(lambda i, j: 255 / 2 * (np.sin(i) + 1), (pixels, pixels), dtype=int))
+        #img = np.uint8([[i+j for i in range(0,pixels)]for j in range(0,pixels)])
+        mg = np.uint8(np.fromfunction(lambda i, j: 255 +i*0, (pixels, pixels), dtype=int))
+        #img = np.uint8(np.fromfunction(lambda u, v: (np.sin(u) + np.cos(v)), (pixels, pixels)))
+        fourier = np.fft.fft2(img)
+        fourier_s = np.fft.fftshift(fourier)
+        fourier_s=np.uint8(abs(fourier_s))
+        print(img)
 
+        # breakpoint()
+        # # camera settings
         self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES) #2.5D
-        self.begin_ambient_camera_rotation(rate=0.01)  # Start move camera
+        #self.set_camera_orientation(phi=0 * DEGREES, theta=-45 * DEGREES) #TOP
+        #self.set_camera_orientation(phi=90 * DEGREES, theta=0 * DEGREES) #side
+        self.camera.frame_center.shift(2 * OUT)
+        self.begin_ambient_camera_rotation(rate=0.1)  # Start move camera
 
-        #setup the sizes
-        pixels=7
+        #make the realspace
+        UPFACTOR=0.5
+        r=Realspace(pixel_len=pixels)
+        r.fill_real_space(img_array=img)
+        r.scale(9/pixels*FACTOR*UPFACTOR).to_edge(UL)
+        self.add_fixed_in_frame_mobjects(r)
 
-        #setup function
-        #k_space_ar= np.zeros((pixels, pixels), dtype=complex)
-        r = 255 * np.ones((pixels, pixels))
-        phi_rad = np.random.uniform(0, 2 * np.pi, (pixels, pixels))
-        k_space_ar= r * np.exp(1j * phi_rad)
-        amp_ar=np.abs(k_space_ar)
-        phi_ar=(np.angle(k_space_ar, deg=True))
-        # calculate realspace
-        k_space_ar_shift= np.fft.ifftshift(k_space_ar)
-        real_out_ar =  np.fft.ifft2(k_space_ar_shift)
+        my_plane= K_Space(pixel_len=pixels)
 
-        # setup the k_plane
-        k_plane = K_Space(pixel_len=pixels)
-        k_plane.set_x(0)
-        k_plane.set_y(0)
-        k_plane.set_z(-0.01)
-        #k_plane.fill_k_space(k_amp_ar=amp_ar, dots_lines=True)
-        k_plane.set_phase_flowers(amp_array=amp_ar,phase_array=phi_ar)
-        k_plane.scale_about_point(9/pixels*FACTOR,ORIGIN)
-        k_plane.set_shade_in_3d(True)
-        self.add(k_plane)
+        #middle the plane
+        my_plane.set_x(0)
+        my_plane.set_y(0)
+        my_plane.set_z(0)
+        my_plane.scale_about_point(9/pixels*FACTOR,ORIGIN)
+        my_plane.fill_k_space(img_array=fourier_s, dots_lines=True)
+        my_plane.set_phase_flowers(fourier_s)
+        my_plane.set_shade_in_3d(True)
+        # self.play(TransformFromCopy(r,my_plane))
+        self.add(my_plane)
+        self.wait()
+               #
 
-        # setup the real_out_plane
-        real_out_plane = Realspace(pixel_len=pixels)
-        real_out_plane.fill_real_space(real_ar=real_out_ar.real)
-        real_out_plane.scale(9 / pixels * FACTOR * 0.4).to_edge(UR)
-        all2=real_out_plane
-        self.add_fixed_in_frame_mobjects(all2)
+
+        # magic_plane=my_plane.set__magic_plane()
+        # magic_gauss=my_plane.set_magic_gauss()
+        # #first part
+        # self.add(my_plane)
+        # # self.wait(15)
+        # self.play(Write(magic_plane), run_time=1)
+        # #make the filtering:
+        # img2=np.uint8(img*(1-my_plane.gauss_array_2d()))
+        # print(img2)
+        # # self.wait(10)
+        # my_plane2= K_Space(pixel_len=pixels)
+        # my_plane2.set_x(0)
+        # my_plane2.set_y(0)
+        # my_plane2.scale_about_point(9 / pixels, ORIGIN)
+        # my_plane2.fill_k_space(img_array=img2, dots_lines=True)
+        # # self.play(Transform(magic_plane,magic_gauss),
+        # #           Transform(my_plane,my_plane2),run_time=1)
+        # # self.wait(10)
+        #
+
+
+
 
 
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim  -s    -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim   -p -s  -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " +"lala"
     os.system(command_A + command_B)

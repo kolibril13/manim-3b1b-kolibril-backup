@@ -26,6 +26,7 @@ class FLOWER(VMobject):
                 Ellipse(height=0.7).rotate(2 * PI / 3)
             ).set_style(fill_opacity=1, fill_color=self.color1, stroke_width=0).rotate(PI / 6) #green
             knosp.scale(self.scale_fac)
+            knosp.shift(OUT*0.01)
             self.add(knosp)
 
         # blossom_grow
@@ -48,6 +49,9 @@ class FLOWER(VMobject):
                 Ellipse(height=0.7).rotate(2 * PI / 3)
             ).set_style(fill_opacity=1, fill_color=bloss_col, stroke_width=0).scale(self.scale_fac*0.9)
             nekta = Dot(fill_color=YELLOW).scale(self.scale_fac*2)
+            bloss.shift(OUT * 0.02)#
+            nekta.shift(OUT * 0.03)
+
             self.add( bloss,nekta)
         if 270 <= self.a_deg:
             if self.a_deg < 315:
@@ -69,3 +73,6 @@ class FLOWER(VMobject):
                 [i.scale(1 - last_last_param) for i in self.submobjects]
                 #[i.set_style(stroke_width=1) for i in self.submobjects]
                 # [i.set_style(fill_opacity=1-last_last_param) for i in self.submobjects]
+
+    def __str__(self):
+        return f'FLOWER({self.a_deg})'
