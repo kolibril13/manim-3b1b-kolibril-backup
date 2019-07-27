@@ -358,7 +358,7 @@ class SmallDot(Dot):
 class Ellipse(Circle):
     CONFIG = {
         "width": 2,
-        "height": 1
+        "height": 1,
     }
 
     def __init__(self, **kwargs):

@@ -1,5 +1,5 @@
 from manimlib.imports import *
-
+from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.super_Flower import FLOWER
 class K_Space(VMobject):
     CONFIG = {
         "Pixel":2,
@@ -15,6 +15,7 @@ class K_Space(VMobject):
         self.term= VGroup()
         PIXELS = self.pixel_len * self.pixel_len
         square_ALL = [Square(fill_opacity=1, side_length=1) for i in range(0, PIXELS)]
+        flower_all= [FLOWER(np.random.randint(1, 360)) for i in range(0, PIXELS)]
         j = 0
         for i, square_to_move in enumerate(square_ALL):
             if i % np.sqrt(PIXELS) == 0:
@@ -23,6 +24,15 @@ class K_Space(VMobject):
             square_to_move.move_to((LEFT * k + j * DOWN))
         self.term.add(*square_ALL)
         self.add(self.term)
+        self.term2 = VGroup()
+        j = 0
+        for i, square_to_move in enumerate(flower_all):
+            if i % np.sqrt(PIXELS) == 0:
+                j += 1
+            k = i - j * np.sqrt(PIXELS)
+            square_to_move.move_to((LEFT * k + j * DOWN)).scale(0.2)
+        self.term2.add(*flower_all)
+        self.add(self.term2)
 
     def fill_k_space(self):
         img_array= np.uint8(np.random.randint(1, 255, (self.pixel_len, self.pixel_len)))
@@ -45,7 +55,7 @@ class K_Space(VMobject):
 
 class lala(Scene):
     def construct(self):
-        my_plane= K_Space(2,pixel_len=99).scale(0.2)
+        my_plane= K_Space(2,pixel_len=10).scale(0.3)
         my_plane.move_to(ORIGIN)
         my_plane.fill_k_space()
         self.add(my_plane)
