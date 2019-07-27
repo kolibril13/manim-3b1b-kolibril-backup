@@ -207,8 +207,8 @@ class lala(ThreeDScene):
         my_plane.set_y(0)
         my_plane.set_z(0)
         my_plane.scale_about_point(9/pixels*FACTOR,ORIGIN)
-        my_plane.fill_k_space(img_array=fourier_s, dots_lines=True)
-        my_plane.set_phase_flowers(fourier_s)
+        my_plane.fill_k_space(img_array=fourier_s+100, dots_lines=True)
+        my_plane.set_phase_flowers(fourier_s+160)
         my_plane.set_shade_in_3d(True)
         # self.play(TransformFromCopy(r,my_plane))
         self.add(my_plane)
@@ -243,6 +243,6 @@ class lala(ThreeDScene):
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim    -s  -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim   -p -s  -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " +"lala"
     os.system(command_A + command_B)
