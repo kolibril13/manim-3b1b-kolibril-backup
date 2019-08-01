@@ -235,48 +235,50 @@ class Scene1_amplitude(ThreeDScene):  # with real plane on the right
         return k_disp,real_out
 
     def construct(self):
-        Order= [("LEFT",3),("LEFT",1),("UP",1),("UP",3),("DIAG",2)]
-        o_step=4
-        pos_ALL= Order[o_step]
-        UP_arrow= SVGMobject("arrow.svg",fill_color= ORANGE).shift(UP*4.5)
-        UP_arrow.set_shade_in_3d(True)
-        self.add(UP_arrow)
-        k_text = TextMobject("K-Space", fill_color=ORANGE).shift(DOWN * 4).scale(2)
-        #k_text.set_shade_in_3d(True)
-        self.add(k_text)
+        Order= [("LEFT",3),("LEFT",1),("UP",1),("UP",3),("DIAG",2),("UP",0)]
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
         self.camera.frame_center.shift(2 * OUT)
-        pixels = 19
-        ##blog 1
-        tick_start_amp = 0; tick_end_amp = 255
-        val_tracker = ValueTracker(tick_start_amp)
-        k_disp,real_out =  self.MAKE_MATH_AND_DISP(pixels, num_tracker=val_tracker, pos_ALL=pos_ALL)
-        real_text = TextMobject("Real-Space").scale(0.75).next_to(real_out,DOWN)
-        self.add_fixed_in_frame_mobjects(real_out,real_text)
+        #yess
+        for o_step in range(0,len(Order)):
+            pos_ALL= Order[o_step]
+            UP_arrow= SVGMobject("arrow.svg",fill_color= ORANGE).shift(UP*4.5)
+            UP_arrow.set_shade_in_3d(True)
+            self.add(UP_arrow)
+            k_text = TextMobject("K-Space", fill_color=ORANGE).shift(DOWN * 4).scale(2)
+            #k_text.set_shade_in_3d(True)
+            self.add(k_text)
 
-        self.add(k_disp)
-        ## LET'S MOVE IT!###
-        self.play(
-            UpdateFromFunc(
-                VGroup(k_disp,real_out),
-                lambda mob: mob.become(VGroup(
-                    *self.MAKE_MATH_AND_DISP(pixels, val_tracker,pos_ALL=pos_ALL)
-                ))
-            ),
-            val_tracker.set_value, tick_end_amp, rate_func=linear, run_time=1
-        )
-        self.wait()
-        ## blog2
-        tick_next_amp = 0
-        self.play(
-            UpdateFromFunc(
-                VGroup(k_disp, real_out),
-                lambda mob: mob.become(VGroup(
-                    *self.MAKE_MATH_AND_DISP(pixels, val_tracker, pos_ALL=pos_ALL)
-                ))
-            ),
-            val_tracker.set_value, tick_next_amp, rate_func=linear, run_time=1
-        )
+            pixels = 19
+            ##blog 1
+            tick_start_amp = 0; tick_end_amp = 255
+            val_tracker = ValueTracker(tick_start_amp)
+            k_disp,real_out =  self.MAKE_MATH_AND_DISP(pixels, num_tracker=val_tracker, pos_ALL=pos_ALL)
+            real_text = TextMobject("Real-Space").scale(0.75).next_to(real_out,DOWN)
+            self.add_fixed_in_frame_mobjects(real_out,real_text)
+
+            self.add(k_disp)
+            ## LET'S MOVE IT!###
+            self.play(
+                UpdateFromFunc(
+                    VGroup(k_disp,real_out),
+                    lambda mob: mob.become(VGroup(
+                        *self.MAKE_MATH_AND_DISP(pixels, val_tracker,pos_ALL=pos_ALL)
+                    ))
+                ),
+                val_tracker.set_value, tick_end_amp, rate_func=linear, run_time=1
+            )
+            self.wait()
+            ## blog2
+            tick_next_amp = 0
+            self.play(
+                UpdateFromFunc(
+                    VGroup(k_disp, real_out),
+                    lambda mob: mob.become(VGroup(
+                        *self.MAKE_MATH_AND_DISP(pixels, val_tracker, pos_ALL=pos_ALL)
+                    ))
+                ),
+                val_tracker.set_value, tick_next_amp, rate_func=linear, run_time=1
+            )
 
 
 #scene="Scene2_with_phase_change"  #FULL ANIMATION SCENE phase
@@ -456,6 +458,6 @@ class spare_things(ThreeDScene): ### often used camera positions, etc.
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim  -s -n0,1   -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim  -p   -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)
