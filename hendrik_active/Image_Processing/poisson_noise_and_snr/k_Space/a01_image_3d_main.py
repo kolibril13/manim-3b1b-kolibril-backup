@@ -1,13 +1,17 @@
 from manimlib.imports import *
 from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FLOWER import FLOWER
+from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FourierMathJuggling import FourierMathJuggling
 
-scenes= ["MiniFixedKScene","FixedKScene", "MovingKScene", "FilterkScene" ]
 global k_plane_size
 k_plane_size=0.7
+
+
+#display options
+
 class K_Space(VMobject):
     CONFIG = {
         "Pixel":2,
-        "pixel_len":23,
+#        "pixel_len":23,
         "mushroom_heigt":1.1,
         "magic_offset_z":k_plane_size
 
@@ -25,6 +29,12 @@ class K_Space(VMobject):
             k = i - j * self.pixel_len
             square_to_move.move_to((LEFT * k + j * DOWN))
         self.term.add(*square_ALL)
+        self.term.set_x(0)
+        self.term.set_y(0)
+        self.term.set_z(0.01)  ## why again?
+        self.term.scale_about_point(9 / self.pixel_len * k_plane_size, ORIGIN)
+        self.term.set_shade_in_3d(True)
+
         self.add(self.term)
 
     def fill_k_space(self, img_kamp, dots_lines=False):
@@ -58,6 +68,8 @@ class K_Space(VMobject):
                 self.lines.add(line)
 
         if dots_lines == True:
+            self.dots.set_shade_in_3d(True)
+            self.lines.set_shade_in_3d(True)
 
             self.add(self.dots)
             self.add(self.lines)
@@ -138,14 +150,10 @@ class K_Space(VMobject):
         g = np.exp(-((d - mu) ** 2 / (2.0 * sigma ** 2)))
         return g
 
-
-
 class Realspace(VMobject):
     CONFIG = {
-        "Pixel": 2,
         "mushroom_heigt": 1.1,
         "magic_offset_z": k_plane_size
-
     }
 
     def __init__(self, pixel_len,**kwargs):
@@ -166,161 +174,87 @@ class Realspace(VMobject):
 
     def fill_real_space(self, img_real):
         t_objects = [t for t in self.term.submobjects]
-        print(len(img_real))
         img_real = img_real.flatten()
         #interpolate the colors from array
         for i, el in enumerate(t_objects):
             el.set_color(interpolate_color(BLACK, WHITE, img_real[i] / 255)) #change!!
 
-
 ############ ANIMATION START
-scene="MiniFixedK_scene"
-class MiniFixedK_scene(ThreeDScene):  # with real plane on the right
+
+
+scene="Minimal"  #newest and best version with image+ fourier+ new image
+class Minimal(ThreeDScene):  # with real plane on the right
     def construct(self):
         self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
         self.camera.frame_center.shift(2 * OUT)
+        pixels=30
 
-        pixels = 7  # setup the sizes
-        raster_size= (pixels,pixels)
-        r = np.random.uniform(0, 255, raster_size) # setup function
-        phi_rad= np.full(raster_size, 5)
-        img_k_space = r * np.exp(1j * phi_rad) # phi_rad must be in radians!
-        img_kamp = np.abs(img_k_space)
-        img_kph = (np.angle(img_k_space, deg=True))
+        #make the math:
+        #k_math=FourierMathJuggling.k_from_preset_minimal(pixels,preset_position="DIAG")
+        k_math=FourierMathJuggling(1)
+        k_math.k_from_real_in()
+        img_real_in = k_math.get_real_in()
+        img_kamp, img_kph = k_math.get_amp_and_ph()
+        if img_real_in is not None:
+            img_kamp = 20*np.log2(img_kamp)
+        # make the disply part:
+        k_disp = K_Space(pixel_len=pixels)   # setup the k_disp
+        k_disp.fill_k_space(img_kamp=(img_kamp), dots_lines=True)
+        #k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
 
-        k_plane = K_Space(pixel_len=pixels)   # setup the k_plane
-        k_plane.set_x(0)
-        k_plane.set_y(0)
-        # k_plane.set_z(0.01) ## why again?
-        k_plane.fill_k_space(img_kamp=img_kamp, dots_lines=True)
-        k_plane.set_phase_flowers(img_kamp=img_kamp, img_kph=img_kph)
-        k_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
-        k_plane.set_shade_in_3d(True)
-        self.add(k_plane)
+        real_in = Realspace(pixel_len=pixels)
+        print(type(img_real_in))
+        if img_real_in is not None:
+            real_in.fill_real_space(img_real_in)
+            real_in.scale(9 / pixels * k_plane_size * 0.3).to_edge(UL)
+            self.add_fixed_in_frame_mobjects(real_in)
 
-class FixedKScene_OUT(ThreeDScene):  # with real plane on the right (forier transform)
+        real_out=Realspace(pixel_len=pixels)
+        img_real= k_math.get_real_out()
+
+        real_out.fill_real_space(img_real)
+        real_out.scale(9 / pixels * k_plane_size *0.3 ).to_edge(UR)
+
+        self.add(k_disp)
+        self.add_fixed_in_frame_mobjects(real_out)
+
+#scene="Minimal2"  #newest and best version with image+ fourier+ new image
+class Minimal2(ThreeDScene):  # with real plane on the right
     def construct(self):
         self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
         self.camera.frame_center.shift(2 * OUT)
-        pixels = 7  # setup the sizes
-        raster_size = (pixels, pixels)
-        r= np.zeros(raster_size, dtype=complex)
-        # phi_rad = np.random.uniform(0, 2 * np.pi, (pixels, pixels))
-        img_k_space = r
-        img_k_space[2,5]= 255*np.exp(1j*2/3*np.pi)
-        print(img_k_space)
-        img_kamp = np.abs(img_k_space)
-        img_kph = (np.angle(img_k_space, deg=True))
-        # calculate realspace
-        k_space_ar_shift = np.fft.ifftshift(img_k_space)
-        real_out_ar = np.fft.ifft2(k_space_ar_shift)
-        print(abs(real_out_ar.real))
+        pixels=7
 
-        # setup the k_plane
-        k_plane = K_Space(pixel_len=pixels)
-        k_plane.set_x(0)
-        k_plane.set_y(0)
-        k_plane.set_z(0.01)
-        k_plane.fill_k_space(img_kamp=img_kamp, dots_lines=True)
-        k_plane.set_phase_flowers(img_kamp=img_kamp, img_kph=img_kph)
-        k_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
-        k_plane.set_shade_in_3d(True)
-        self.add(k_plane)
+        #make the math:
+        k_math=FourierMathJuggling.k_from_preset_minimal(pixels,preset_position="DIAG")
+        #k_math=FourierMathJuggling(1)
+        k_math.k_from_real_in()
+        img_kamp, img_kph = k_math.get_amp_and_ph()
 
-        # setup the real_out_plane
-        real_out_plane = Realspace(pixel_len=pixels)
-        real_out_plane.fill_real_space(img_real=abs(real_out_ar))
-        real_out_plane.scale(9 / pixels * k_plane_size * 0.4).to_edge(UR)
-        all2 = real_out_plane
-        self.add_fixed_in_frame_mobjects(all2)
+        # make the disply part:
+        k_disp = K_Space(pixel_len=pixels)   # setup the k_disp
+        k_disp.fill_k_space(img_kamp=10*np.log2(img_kamp), dots_lines=True)
+        k_disp.set_phase_flowers(img_kamp=10*np.log2(img_kamp), img_kph=img_kph)
 
-class FixedKScene_OUT_random(ThreeDScene):  # with real plane on the right (forier transform)
-    def construct(self):
-        self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
-        self.camera.frame_center.shift(2 * OUT)
-        #self.begin_ambient_camera_rotation(rate=0.01)  # Start move camera
-        # setup the sizes
-        pixels = 7
-        # setup function
-        r = np.random.uniform(0, 255, (pixels, pixels))
-        phi_rad = np.random.uniform(0, 2 * np.pi, (pixels, pixels))
-        img_k_space = r * np.exp(1j * phi_rad)
-        img_kamp = np.abs(img_k_space)
-        img_kph = (np.angle(img_k_space, deg=True))
-        # calculate realspace
-        k_space_ar_shift = np.fft.ifftshift(img_k_space)
-        real_out_ar = np.fft.ifft2(k_space_ar_shift)
-        print(abs(real_out_ar))
+        real_in = Realspace(pixel_len=pixels)
+        img_real_in = k_math.get_real_in()
+        real_in.fill_real_space(img_real_in)
+        real_in.scale(9 / pixels * k_plane_size * 0.3).to_edge(UL)
 
-        # setup the k_plane
-        k_plane = K_Space(pixel_len=pixels)
-        k_plane.set_x(0)
-        k_plane.set_y(0)
-        k_plane.set_z(0.01)
-        k_plane.fill_k_space(img_kamp=img_kamp, dots_lines=True)
-        k_plane.set_phase_flowers(img_kamp=img_kamp, img_kph=img_kph)
-        k_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
-        k_plane.set_shade_in_3d(True)
-        self.add(k_plane)
+        real_out=Realspace(pixel_len=pixels)
+        img_real= k_math.get_real_out()
+        real_out.fill_real_space(img_real)
+        real_out.scale(9 / pixels * k_plane_size *0.3 ).to_edge(UR)
 
-        # setup the real_out_plane
-        real_out_plane = Realspace(pixel_len=pixels)
-        real_out_plane.fill_real_space(img_real=abs(real_out_ar))
-        real_out_plane.scale(9 / pixels * k_plane_size * 0.4).to_edge(UR)
-        all2 = real_out_plane
-        self.add_fixed_in_frame_mobjects(all2)
-
-
-
-class FixedKScene(ThreeDScene): # with real plane on the left
-    def construct(self):
-        # axes:
-        pixels = 9
-        # img= np.uint8(np.random.randint(1, 255, (pixels,pixels)))
-        img = np.uint8(np.fromfunction(lambda i, j: 255 / 2 * (np.sin(i) + 1), (pixels, pixels), dtype=int))
-        # img = np.uint8([[i+j for i in range(0,pixels)]for j in range(0,pixels)])
-        mg = np.uint8(np.fromfunction(lambda i, j: 255 + i * 0, (pixels, pixels), dtype=int))
-        # img = np.uint8(np.fromfunction(lambda u, v: (np.sin(u) + np.cos(v)), (pixels, pixels)))
-        fourier = np.fft.fft2(img)
-        fourier_s = np.fft.fftshift(fourier)
-        fourier_s = np.uint8(abs(fourier_s))
-        print(img)
-
-        # breakpoint()
-        # # camera settings
-        self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
-        # self.set_camera_orientation(phi=0 * DEGREES, theta=-45 * DEGREES) #TOP
-        # self.set_camera_orientation(phi=90 * DEGREES, theta=0 * DEGREES) #side
-        self.camera.frame_center.shift(2 * OUT)
-        self.begin_ambient_camera_rotation(rate=0.1)  # Start move camera
-
-        # make the realspace
-        UPFACTOR = 0.5
-        r = Realspace(pixel_len=pixels)
-        r.fill_real_space(img_real=img)
-        r.scale(9 / pixels * k_plane_size * UPFACTOR).to_edge(UL)
-        self.add_fixed_in_frame_mobjects(r)
-
-        my_plane = K_Space(pixel_len=pixels)
-
-        # middle the plane
-        my_plane.set_x(0)
-        my_plane.set_y(0)
-        my_plane.set_z(0)
-        my_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
-        my_plane.fill_k_space(img_kamp=fourier_s, dots_lines=True)
-        my_plane.set_phase_flowers(fourier_s,fourier_s)
-        my_plane.set_shade_in_3d(True)
-        # self.play(TransformFromCopy(r,my_plane))
-        self.add(my_plane)
-        self.wait()
+        self.add(k_disp)
+        self.add_fixed_in_frame_mobjects(real_out)
+        self.add_fixed_in_frame_mobjects(real_in)
 
 
 class MovingScene(ThreeDScene):
     pass
 
-
-class FilterkScene(ThreeDScene):
+class FilterkScene(ThreeDScene): #TODO : make updated!
     def construct(self):
         # axes:
         pixels = 9
@@ -352,7 +286,7 @@ class FilterkScene(ThreeDScene):
         my_plane = K_Space(pixel_len=pixels)
 
         # middle the plane
-        my_plane.set_x(0)
+        my_plane.set_x(0) ##not needed anymore
         my_plane.set_y(0)
         my_plane.set_z(0)
         my_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
@@ -371,7 +305,7 @@ class FilterkScene(ThreeDScene):
         print(img2)
         self.wait(10)
         my_plane2= K_Space(pixel_len=pixels)
-        my_plane2.set_x(0)
+        my_plane2.set_x(0) #not needed anymore
         my_plane2.set_y(0)
         my_plane2.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
         my_plane2.fill_k_space(img_kamp=img2, dots_lines=True)
@@ -379,17 +313,11 @@ class FilterkScene(ThreeDScene):
                    Transform(my_plane,my_plane2),run_time=1)
         # # self.wait(10)
 
-
-
-
-
 class spare_things(ThreeDScene): ### often used camera positions, etc.
-
     def construct(self):
         pass
 
-
-scene="FixedKScene_OUT"
+#scene="FixedKScene_OUT"
 # if scene == scenes[0] or scenes[1]:
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
