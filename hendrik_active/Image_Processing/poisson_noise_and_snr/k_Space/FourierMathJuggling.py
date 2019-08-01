@@ -48,28 +48,26 @@ class FourierMathJuggling:
             return (pixelx // 2 + center_dist, pixely // 2 + center_dist)
 
     @staticmethod  # init
-    def k_from_preset_minimal(pixels=7, preset_position="LEFT", center_dist=1):
+    def k_from_preset_minimal(pixels=7, preset_position="LEFT", center_dist=1, amplitude=255):
         raster_size = (pixels, pixels)
         img_k_space = np.zeros(raster_size, dtype=complex)
         loc = FourierMathJuggling.pixel_position(raster_size, preset_position, center_dist)
-        img_k_space[loc] = 255
+        img_k_space[loc] = amplitude
         return FourierMathJuggling(img_k_space, pixels)
 
     ############ MAKE MAGIC  ########
 
     def phase_shift_all(self, angle_deg):
         pixels = self.pixels
-        # self.img_k_space[pixels // 2, pixels // 2 + 1] = \
-        # self.img_k_space[pixels // 2, pixels // 2 + 1] *np.exp(1j * np.deg2rad(angle_deg))
         self.img_k_space = self.img_k_space * np.exp(1j * np.deg2rad(angle_deg))
 
-    def phase_shift_single(self, angle_deg):
+    def phase_shift_single(self, angle_deg, preset_position="LEFT",center_dist=1):
         pixels = self.pixels
-        self.img_k_space[pixels // 2, pixels // 2 + 1] = \
-            self.img_k_space[pixels // 2, pixels // 2 + 1] * np.exp(1j * np.deg2rad(angle_deg))
-
-    def set_all_phases(self):
-        pass
+        raster_size = (pixels, pixels)
+        loc = FourierMathJuggling.pixel_position(raster_size, preset_position, center_dist)
+        self.img_k_space[loc] = self.img_k_space[loc]* np.exp(1j * np.deg2rad(angle_deg))
+    def phase_shift_all(self,angle_deg):
+        self.img_k_space =self.img_k_space* np.exp(1j * np.deg2rad(angle_deg))
 
     def apply_transformations(self):
         pass
