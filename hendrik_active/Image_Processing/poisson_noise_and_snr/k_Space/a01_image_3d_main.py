@@ -182,8 +182,75 @@ class Realspace(VMobject):
 ############ ANIMATION START
 
 
-scene="Minimal"  #newest and best version with image+ fourier+ new image
+scene="Minimal_save"  #newest and best version with only k_space
 class Minimal(ThreeDScene):  # with real plane on the right
+    def construct(self):
+        self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
+        self.camera.frame_center.shift(2 * OUT)
+        pixels = 30
+
+        # make the math:
+        k_math=FourierMathJuggling.k_from_preset_minimal(pixels,preset_position="DIAG")
+        img_kamp, img_kph = k_math.get_amp_and_ph()
+
+        # make the disply part:
+        k_disp = K_Space(pixel_len=pixels)  # setup the k_disp
+        k_disp.fill_k_space(img_kamp=img_kamp, dots_lines=True)
+        # k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
+
+        real_out = Realspace(pixel_len=pixels)
+        img_real = k_math.get_real_out()
+        real_out.fill_real_space(1000*abs(img_real)) ## why???
+        real_out.scale(9 / pixels * k_plane_size * 0.3).to_edge(UR)
+
+        self.add(k_disp)
+        self.add_fixed_in_frame_mobjects(real_out)
+
+scene="Minimal"  #newest and best version with only k_space AND ANIMATION!
+class Minimal(ThreeDScene):  # with real plane on the right
+    def get_modification(self, k_math,object_modification, num_tracker):
+        amp= 1/(num_tracker.get_value()+0.1)
+        print(amp)
+        k_math.modulate_amplitude(amp)
+        img_kamp, img_kph = k_math.get_amp_and_ph()
+        object_modification.fill_k_space(img_kamp=img_kamp, dots_lines=True)
+        # object_modification.set_y(0.1* num_tracker.get_value())
+        return object_modification
+    def construct(self):
+        self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
+        self.camera.frame_center.shift(2 * OUT)
+        pixels = 5
+
+        # make the math:
+        k_math=FourierMathJuggling.k_from_preset_minimal(pixels,preset_position="DIAG")
+        img_kamp, img_kph = k_math.get_amp_and_ph()
+
+        # make the disply part:
+        k_disp = K_Space(pixel_len=pixels)  # setup the k_disp
+        k_disp.fill_k_space(img_kamp=img_kamp, dots_lines=False)
+        # k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
+
+        real_out = Realspace(pixel_len=pixels)
+        img_real = k_math.get_real_out()
+        real_out.fill_real_space(1000*abs(img_real)) ## why???
+        real_out.scale(9 / pixels * k_plane_size * 0.3).to_edge(UR)
+        self.add(k_disp)
+        self.add_fixed_in_frame_mobjects(real_out)
+        ## LET'S MOVE IT!
+        tick_start = 0
+        tick_end = 100
+        val_tracker= ValueTracker(tick_start)
+        self.play(
+            UpdateFromFunc(
+                k_disp,
+                lambda mob: mob.become(self.get_modification(k_math,k_disp, val_tracker))),
+            val_tracker.set_value, tick_end, rate_func=linear
+        )
+
+
+
+#scene="Fourier_In_k_Out"  #newest and best version with image+ fourier+ new image
+class Fourier_In_k_Out(ThreeDScene):  # with real plane on the right
     def construct(self):
         self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
         self.camera.frame_center.shift(2 * OUT)
@@ -217,39 +284,6 @@ class Minimal(ThreeDScene):  # with real plane on the right
 
         self.add(k_disp)
         self.add_fixed_in_frame_mobjects(real_out)
-
-#scene="Minimal2"  #newest and best version with image+ fourier+ new image
-class Minimal2(ThreeDScene):  # with real plane on the right
-    def construct(self):
-        self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
-        self.camera.frame_center.shift(2 * OUT)
-        pixels=7
-
-        #make the math:
-        k_math=FourierMathJuggling.k_from_preset_minimal(pixels,preset_position="DIAG")
-        #k_math=FourierMathJuggling(1)
-        k_math.k_from_real_in()
-        img_kamp, img_kph = k_math.get_amp_and_ph()
-
-        # make the disply part:
-        k_disp = K_Space(pixel_len=pixels)   # setup the k_disp
-        k_disp.fill_k_space(img_kamp=10*np.log2(img_kamp), dots_lines=True)
-        k_disp.set_phase_flowers(img_kamp=10*np.log2(img_kamp), img_kph=img_kph)
-
-        real_in = Realspace(pixel_len=pixels)
-        img_real_in = k_math.get_real_in()
-        real_in.fill_real_space(img_real_in)
-        real_in.scale(9 / pixels * k_plane_size * 0.3).to_edge(UL)
-
-        real_out=Realspace(pixel_len=pixels)
-        img_real= k_math.get_real_out()
-        real_out.fill_real_space(img_real)
-        real_out.scale(9 / pixels * k_plane_size *0.3 ).to_edge(UR)
-
-        self.add(k_disp)
-        self.add_fixed_in_frame_mobjects(real_out)
-        self.add_fixed_in_frame_mobjects(real_in)
-
 
 class MovingScene(ThreeDScene):
     pass
@@ -321,6 +355,6 @@ class spare_things(ThreeDScene): ### often used camera positions, etc.
 # if scene == scenes[0] or scenes[1]:
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim  -s   -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim   -s  -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)

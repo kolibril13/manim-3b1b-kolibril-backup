@@ -73,6 +73,11 @@ class FourierMathJuggling:
 
     def apply_transformations(self):
         pass
+
+    def modulate_amplitude(self,x):
+        self.img_k_space= x*self.img_k_space
+        pass
+
     ############ GET OUTPUT  ########
 
     def get_amp_and_ph(self):
