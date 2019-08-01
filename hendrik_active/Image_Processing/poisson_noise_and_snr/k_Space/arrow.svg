@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="420"
+   height="644"
+   viewBox="90 60 420 644"
+   sodipodi:docname="Emblem.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.1"
+   id="svg6"
+   inkscape:version="0.92.4 (33fec40, 2019-01-16)">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1853"
+     inkscape:window-height="1025"
+     id="namedview8"
+     showgrid="false"
+     inkscape:zoom="1.0365043"
+     inkscape:cx="210"
+     inkscape:cy="322"
+     inkscape:window-x="67"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <metadata
+     id="metadata2">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Star Trek Emblem</dc:title>
+        <dc:date>1.st May 2009</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Jesper Hansen</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>None</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:language>Dansk</dc:language>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>Star Trek</rdf:li>
+            <rdf:li>signia</rdf:li>
+            <rdf:li>emblem</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:description>It is a draw over of an original bitmap from a fan site.</dc:description>
+        <cc:license
+           rdf:resource="http://artlibre.org/licence.php/lalgb.html" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://artlibre.org/licence.php/lalgb.html">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <path
+     d="M 302.3125,83.5625 C 173.53735,277.52458 130.10428,475.02888 115.0625,678.46875 198.56887,571.91447 272.07011,502.06874 326.0625,469.625 385.67389,433.80484 437.01418,490.46235 487.46875,630.34375 453.99082,447.8024 430.8417,269.16999 302.3125,83.5625 Z"
+     style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     id="path4"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccscc" />
+</svg>

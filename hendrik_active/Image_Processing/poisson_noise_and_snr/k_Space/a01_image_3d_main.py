@@ -34,10 +34,14 @@ class K_Space(VMobject):
         self.term.set_z(0.01)  ## why again?
         self.term.scale_about_point(9 / self.pixel_len * k_plane_size, ORIGIN)
         self.term.set_shade_in_3d(True)
-
-        self.add(self.term)
+        self.add(self.term) ## better return term???
 
     def fill_k_space(self, img_kamp, dots_lines=False):
+
+        ORI_POINT= Dot(fill_color= ORANGE).shift(OUT*0.01).scale(2)
+        ORI_POINT.set_shade_in_3d(True)
+        self.add(ORI_POINT)
+
         t_objects = [t for t in self.term.submobjects]
         img_kamp = img_kamp.flatten()
 
@@ -206,47 +210,78 @@ class Minimal(ThreeDScene):  # with real plane on the right
         self.add(k_disp)
         self.add_fixed_in_frame_mobjects(real_out)
 
-scene="Minimal"  #newest and best version with only k_space AND ANIMATION!
+scene="Minimal"  #FULL ANIMATION SCENE
 class Minimal(ThreeDScene):  # with real plane on the right
-    def get_modification(self, k_math,object_modification, num_tracker):
-        amp= 1/(num_tracker.get_value()+0.1)
-        print(amp)
-        k_math.modulate_amplitude(amp)
-        img_kamp, img_kph = k_math.get_amp_and_ph()
-        object_modification.fill_k_space(img_kamp=img_kamp, dots_lines=True)
-        # object_modification.set_y(0.1* num_tracker.get_value())
-        return object_modification
-    def construct(self):
-        self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
-        self.camera.frame_center.shift(2 * OUT)
-        pixels = 5
+    def MAKE_MATH_AND_DISP(self, pixels, num_tracker, phase_tracker= None, preset_position="UP"):
+        amp= (num_tracker.get_value())
+        k_math=FourierMathJuggling.k_from_preset_minimal(pixels,preset_position=preset_position,amplitude=amp)
+        if phase_tracker is not None: # in case for phase shifting
+            k_math.phase_shift_single(phase_tracker.get_value(),preset_position=preset_position)
 
-        # make the math:
-        k_math=FourierMathJuggling.k_from_preset_minimal(pixels,preset_position="DIAG")
         img_kamp, img_kph = k_math.get_amp_and_ph()
-
         # make the disply part:
         k_disp = K_Space(pixel_len=pixels)  # setup the k_disp
-        k_disp.fill_k_space(img_kamp=img_kamp, dots_lines=False)
-        # k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
+        k_disp.fill_k_space(img_kamp=img_kamp, dots_lines=True)
+        if phase_tracker is not None: # in case for phase shifting
+            k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
 
         real_out = Realspace(pixel_len=pixels)
         img_real = k_math.get_real_out()
-        real_out.fill_real_space(1000*abs(img_real)) ## why???
+        real_out.fill_real_space(pixels**2*abs(img_real)) ## why??? something with norm
         real_out.scale(9 / pixels * k_plane_size * 0.3).to_edge(UR)
-        self.add(k_disp)
+        return k_disp,real_out
+
+    def construct(self):
+        UP_arrow= SVGMobject("arrow.svg",fill_color= ORANGE).shift(UP*4.5)
+        UP_arrow.set_shade_in_3d(True)
+        self.add(UP_arrow)
+        #self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
+        self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
+        self.camera.frame_center.shift(2 * OUT)
+        pixels = 19
+
+        ##blog 1
+        tick_start_amp = 0; tick_end_amp = 255
+        val_tracker = ValueTracker(tick_start_amp)
+        k_disp,real_out =  self.MAKE_MATH_AND_DISP(pixels, num_tracker=val_tracker, preset_position="UP")
         self.add_fixed_in_frame_mobjects(real_out)
-        ## LET'S MOVE IT!
-        tick_start = 0
-        tick_end = 100
-        val_tracker= ValueTracker(tick_start)
+        self.add(k_disp)
+        ## LET'S MOVE IT!###
         self.play(
             UpdateFromFunc(
-                k_disp,
-                lambda mob: mob.become(self.get_modification(k_math,k_disp, val_tracker))),
-            val_tracker.set_value, tick_end, rate_func=linear
+                VGroup(k_disp,real_out),
+                lambda mob: mob.become(VGroup(
+                    *self.MAKE_MATH_AND_DISP(pixels, val_tracker,preset_position="UP")
+                ))
+            ),
+            val_tracker.set_value, tick_end_amp, rate_func=linear, run_time=1
         )
+        self.wait()
+        tick_start_ph=0; tick_end_ph=360
+        phase_tracker= ValueTracker(tick_start_ph)
+        ## blog2
+        self.play(
+            UpdateFromFunc(
+                VGroup(k_disp, real_out),
+                lambda mob: mob.become(VGroup(
+                    *self.MAKE_MATH_AND_DISP(pixels, val_tracker, phase_tracker=phase_tracker, preset_position="UP")
+                ))
+            ),
+            phase_tracker.set_value, tick_end_ph, rate_func=linear, run_time=1
+        )
+        self.wait()
 
+        #blog3 :
+        tick_next_amp = 0
+        self.play(
+            UpdateFromFunc(
+                VGroup(k_disp, real_out),
+                lambda mob: mob.become(VGroup(
+                    *self.MAKE_MATH_AND_DISP(pixels, val_tracker, preset_position="UP")
+                ))
+            ),
+            val_tracker.set_value, tick_next_amp, rate_func=linear, run_time=1
+        )
 
 
 #scene="Fourier_In_k_Out"  #newest and best version with image+ fourier+ new image
@@ -351,10 +386,8 @@ class spare_things(ThreeDScene): ### often used camera positions, etc.
     def construct(self):
         pass
 
-#scene="FixedKScene_OUT"
-# if scene == scenes[0] or scenes[1]:
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim   -s  -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim    -p -l -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)
