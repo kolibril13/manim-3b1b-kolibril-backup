@@ -1,5 +1,7 @@
 from PIL import Image
 import numpy as np ##here???
+from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.IMAGE_star import star
+
 class FourierMathJuggling:
     def __init__(self, img_k_space, pixels):
         """
@@ -17,6 +19,15 @@ class FourierMathJuggling:
         img_array = np.asarray(img)  # konv PIL Format in numpy format
         img_array = img_array[::4,::4]
         img_array= img_array[50:80,100:130]
+        ##even make forier transform yet:
+        f = np.fft.fft2(img_array)
+        fshift = np.fft.fftshift(f)
+        ## setup for the whole class
+        self.img_k_space = fshift
+        self.img_realin = img_array
+
+    def k_from_real_in_from_star(self):  # init  ## set the input
+        img_array= star
         ##even make forier transform yet:
         f = np.fft.fft2(img_array)
         fshift = np.fft.fftshift(f)
