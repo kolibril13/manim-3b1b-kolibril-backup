@@ -327,8 +327,8 @@ class Scene1_amplitude(ThreeDScene):  # with real plane on the right
                 val_tracker.set_value, tick_next_amp, rate_func=linear, run_time=1
             )
 
-#scene="Scene2_with_phase_change"  #FULL ANIMATION SCENE phase but no real_out
-class Scene2_with_phase_change(ThreeDScene):  # with real plane on the right
+#scene="Scene2_with_phase_change_crap"  #FULL ANIMATION SCENE phase but no real_out
+class Scene2_with_phase_change_crap(ThreeDScene):  # with real plane on the right
     def perperation_math_and_disp_scene2(self, pixels, num_tracker, phase_tracker= None, preset_position="UP"):
         amp= (num_tracker.get_value())
         k_math=FourierMathJuggling.k_from_preset_minimal(pixels,preset_position=preset_position,amplitude=amp)
@@ -405,11 +405,11 @@ class Scene2_with_phase_change(ThreeDScene):  # with real plane on the right
             val_tracker.set_value, tick_next_amp, rate_func=linear, run_time=1
         )
 
-scene="Scene2_with_phase_change_try2"  #FULL ANIMATION SCENE phase but no real_out
-class Scene2_with_phase_change_try2(ThreeDScene):  # with real plane on the right
+scene="Scene2_with_phase_change"  #FULL ANIMATION SCENE phase but no real_out
+class Scene2_with_phase_change(ThreeDScene):  # with real plane on the right
 
     def construct(self):
-        run_setting = {"run_time": 1 , "rate_func": linear}
+        run_setting = {"run_time": 2  , "rate_func": linear}
         # GENERAL:
         postion_setting={"preset_position":"LEFT","center_dist": 1}
         UP_arrow= SVGMobject("arrow.svg",fill_color= ORANGE).shift(UP*4.5)
@@ -418,8 +418,8 @@ class Scene2_with_phase_change_try2(ThreeDScene):  # with real plane on the righ
         #self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
         self.camera.frame_center.shift(2 * OUT)
-        pixels = 19 #this is how it shoud be
-        #pixels=5 # only shortly
+        #pixels = 19 #this is how it shoud be
+        pixels=5 # only shortly
         #math_preperation:
         k_math=FourierMathJuggling.k_from_preset_minimal(pixels,**postion_setting)
         k_disp=K_Space(pixel_len=pixels)
@@ -430,28 +430,28 @@ class Scene2_with_phase_change_try2(ThreeDScene):  # with real plane on the righ
         tick_start_amp = 0; tick_end_amp = 255
         val_tracker = ValueTracker(tick_start_amp)
         def Tiny_UpdaterA(my_object, val_trackerX):
-            def small_change2(my_object):
+            def modify_amp(my_object):
                 k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting,
                                                                    amplitude=val_trackerX.get_value())
                 my_object.fill_k_space(k_math.get_amp_and_ph()[0])
                 return my_object
-            return UpdateFromFunc(my_object, small_change2)
+            return UpdateFromFunc(my_object, modify_amp)
         self.play(Tiny_UpdaterA(k_disp, val_tracker), val_tracker.set_value, tick_end_amp,**run_setting)
 
         self.wait()  ##here starts the phase change
 
-        tick_start_ph = 0; tick_end_ph = 260
-        val_tracker = ValueTracker(tick_start_ph)
         def Tiny_UpdaterB(my_object, val_trackerX):
-            def small_change2(my_object):
-                k_math.phase_shift_single(val_trackerX.get_value(),**postion_setting)
+            def modify_phase(my_object):
+                val=val_trackerX.get_value()
+                k_math.phase_shift_single(val,**postion_setting)
+                print(val, end= "\n")
                 my_object.set_phase_flowers(*k_math.get_amp_and_ph())
                 return my_object
+            return UpdateFromFunc(my_object, modify_phase)
 
-            return UpdateFromFunc(my_object, small_change2)
-
+        val_tracker = ValueTracker(0)
+        tick_end_ph = 180 ; start=0
         self.play(Tiny_UpdaterB(k_disp, val_tracker), val_tracker.set_value, tick_end_ph, **run_setting)
-        self.wait()
 
 
 
@@ -571,6 +571,6 @@ class spare_things(ThreeDScene): ### often used camera positions, etc.
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim    -l -p -n1,3  -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim   -l -p  -n 1,6  -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)
