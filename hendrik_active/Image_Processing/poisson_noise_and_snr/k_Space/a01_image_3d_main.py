@@ -38,7 +38,7 @@ class K_Space(VMobject):
 
     def fill_k_space(self, img_kamp, dots_lines=False):
 
-        ORI_POINT= Dot(fill_color= ORANGE).shift(OUT*0.01).scale(2)
+        ORI_POINT= Dot(fill_color= ORANGE).shift(OUT*0.01).scale(1.5)
         ORI_POINT.set_shade_in_3d(True)
         self.add(ORI_POINT)
 
@@ -210,8 +210,77 @@ class Minimal(ThreeDScene):  # with real plane on the right
         self.add(k_disp)
         self.add_fixed_in_frame_mobjects(real_out)
 
-scene="Minimal"  #FULL ANIMATION SCENE
-class Minimal(ThreeDScene):  # with real plane on the right
+scene="Scene1_amplitude"  #FULL ANIMATION SCENE amplitude
+class Scene1_amplitude(ThreeDScene):  # with real plane on the right
+    def MAKE_MATH_AND_DISP(self, pixels, num_tracker, phase_tracker= None,pos_ALL=("UP",1) ):
+        preset_position = pos_ALL[0]
+        center_dist = pos_ALL[1]
+        amp= (num_tracker.get_value())
+        k_math=FourierMathJuggling.k_from_preset_minimal(
+            pixels,preset_position=preset_position,amplitude=amp,center_dist=center_dist)
+        if phase_tracker is not None: # in case for phase shifting
+            k_math.phase_shift_single(phase_tracker.get_value(),preset_position=preset_position,center_dist=center_dist)
+
+        img_kamp, img_kph = k_math.get_amp_and_ph()
+        # make the disply part:
+        k_disp = K_Space(pixel_len=pixels)  # setup the k_disp
+        k_disp.fill_k_space(img_kamp=img_kamp, dots_lines=True)
+        if phase_tracker is not None: # in case for phase shifting
+            k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
+
+        real_out = Realspace(pixel_len=pixels)
+        img_real = k_math.get_real_out()
+        real_out.fill_real_space(pixels**2*abs(img_real)) ## why??? something with norm
+        real_out.scale(9 / pixels * k_plane_size * 0.3).to_edge(UR)
+        return k_disp,real_out
+
+    def construct(self):
+        Order= [("LEFT",3),("LEFT",1),("UP",1),("UP",3),("DIAG",2)]
+        o_step=4
+        pos_ALL= Order[o_step]
+        UP_arrow= SVGMobject("arrow.svg",fill_color= ORANGE).shift(UP*4.5)
+        UP_arrow.set_shade_in_3d(True)
+        self.add(UP_arrow)
+        k_text = TextMobject("K-Space", fill_color=ORANGE).shift(DOWN * 4).scale(2)
+        #k_text.set_shade_in_3d(True)
+        self.add(k_text)
+        self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
+        self.camera.frame_center.shift(2 * OUT)
+        pixels = 19
+        ##blog 1
+        tick_start_amp = 0; tick_end_amp = 255
+        val_tracker = ValueTracker(tick_start_amp)
+        k_disp,real_out =  self.MAKE_MATH_AND_DISP(pixels, num_tracker=val_tracker, pos_ALL=pos_ALL)
+        real_text = TextMobject("Real-Space").scale(0.75).next_to(real_out,DOWN)
+        self.add_fixed_in_frame_mobjects(real_out,real_text)
+
+        self.add(k_disp)
+        ## LET'S MOVE IT!###
+        self.play(
+            UpdateFromFunc(
+                VGroup(k_disp,real_out),
+                lambda mob: mob.become(VGroup(
+                    *self.MAKE_MATH_AND_DISP(pixels, val_tracker,pos_ALL=pos_ALL)
+                ))
+            ),
+            val_tracker.set_value, tick_end_amp, rate_func=linear, run_time=1
+        )
+        self.wait()
+        ## blog2
+        tick_next_amp = 0
+        self.play(
+            UpdateFromFunc(
+                VGroup(k_disp, real_out),
+                lambda mob: mob.become(VGroup(
+                    *self.MAKE_MATH_AND_DISP(pixels, val_tracker, pos_ALL=pos_ALL)
+                ))
+            ),
+            val_tracker.set_value, tick_next_amp, rate_func=linear, run_time=1
+        )
+
+
+#scene="Scene2_with_phase_change"  #FULL ANIMATION SCENE phase
+class Scene2_with_phase_change(ThreeDScene):  # with real plane on the right
     def MAKE_MATH_AND_DISP(self, pixels, num_tracker, phase_tracker= None, preset_position="UP"):
         amp= (num_tracker.get_value())
         k_math=FourierMathJuggling.k_from_preset_minimal(pixels,preset_position=preset_position,amplitude=amp)
@@ -305,7 +374,6 @@ class Fourier_In_k_Out(ThreeDScene):  # with real plane on the right
         #k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
 
         real_in = Realspace(pixel_len=pixels)
-        print(type(img_real_in))
         if img_real_in is not None:
             real_in.fill_real_space(img_real_in)
             real_in.scale(9 / pixels * k_plane_size * 0.3).to_edge(UL)
@@ -335,7 +403,7 @@ class FilterkScene(ThreeDScene): #TODO : make updated!
         fourier = np.fft.fft2(img)
         fourier_s = np.fft.fftshift(fourier)
         fourier_s = np.uint8(abs(fourier_s))
-        print(img)
+
 
         # breakpoint()
         # # camera settings
@@ -388,6 +456,6 @@ class spare_things(ThreeDScene): ### often used camera positions, etc.
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim    -p -l -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim  -s -n0,1   -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)

@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy as np ##here???
 class FourierMathJuggling:
-    def __init__(self, img_k_space, pixels=7):
+    def __init__(self, img_k_space, pixels):
         """
         This will create a k_space object with amplitude, phase and the option of an inverse transformation
         """
@@ -37,15 +37,15 @@ class FourierMathJuggling:
     def pixel_position(raster_size, preset_position, center_dist=1):
         pixely, pixelx = raster_size
         if preset_position == "LEFT":
-            return (pixelx // 2, pixely // 2 - center_dist)
+            return (pixely // 2, pixelx // 2 + center_dist)
         if preset_position == "RIGHT":
-            return (pixelx // 2, pixely // 2 + center_dist)
+            return (pixely // 2, pixelx // 2 - center_dist)
         if preset_position == "UP":
-            return (pixelx // 2 - center_dist, pixely // 2)
+            return (pixely // 2 - center_dist, pixelx // 2)
         if preset_position == "DOWN":
-            return (pixelx // 2 + center_dist, pixely // 2)
+            return (pixely // 2 + center_dist, pixelx // 2)
         if preset_position == "DIAG":
-            return (pixelx // 2 + center_dist, pixely // 2 + center_dist)
+            return (pixely // 2 - center_dist, pixelx // 2 + center_dist)
 
     @staticmethod  # init
     def k_from_preset_minimal(pixels=7, preset_position="LEFT", center_dist=1, amplitude=255):
