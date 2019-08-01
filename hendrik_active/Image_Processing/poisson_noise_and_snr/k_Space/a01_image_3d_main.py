@@ -10,8 +10,7 @@ k_plane_size=0.7
 
 class K_Space(VMobject):
     CONFIG = {
-        "Pixel":2,
-#        "pixel_len":23,
+        "pixel_len":23,
         "mushroom_heigt":1.1,
         "magic_offset_z":k_plane_size
 
@@ -20,6 +19,8 @@ class K_Space(VMobject):
         digest_config(self, kwargs)
         VMobject.__init__(self, **kwargs)
         self.term= VGroup()
+        self.flows = VGroup()  ## these will be deleted and filled in subfunctions
+        self.lines_and_dots=VGroup() ## these will be deleted and filled in subfunctions
         PIXELS = self.pixel_len * self.pixel_len
         square_ALL = [Square(fill_opacity=1, side_length=1) for i in range(0, PIXELS)]
         j = 0
@@ -36,13 +37,10 @@ class K_Space(VMobject):
         self.term.set_shade_in_3d(True)
         self.add(self.term) ## better return term???
 
-    def fill_k_space(self, img_kamp, dots_lines=False):
-
-
-
+    def fill_k_space(self, img_kamp, dots_lines=True): #empty it first, then refill
+        self.remove(self.lines_and_dots)
         t_objects = [t for t in self.term.submobjects]
         img_kamp = img_kamp.flatten()
-
         # create dots array
         self.dots = VGroup()
         self.lines = VGroup()
@@ -70,35 +68,35 @@ class K_Space(VMobject):
                 self.lines.add(line)
 
         if dots_lines == True:
-            self.dots.set_shade_in_3d(True)
-            self.lines.set_shade_in_3d(True)
-
-            self.add(self.dots)
-            self.add(self.lines)
-
+            self.lines_and_dots=VGroup(self.dots,self.lines).set_shade_in_3d(True)
+            self.add(self.lines_and_dots)
         #lastly the middle point
         ORI_POINT = Dot(fill_color=ORANGE).shift(OUT * 0.01).scale(1.5)
         ORI_POINT.set_shade_in_3d(True)
         self.add(ORI_POINT)
 
+    def clear_k_space(self):
+        self.remove(self.lines_and_dots)
+
     def set_phase_flowers(self, img_kamp, img_kph):
+        self.remove(self.flows)
+        self.flows = VGroup()
         t_objects = [t for t in self.term.submobjects]
         img_kamp = img_kamp.flatten()
         img_kph = img_kph.flatten()
         # create dots array
-        self.flows = VGroup()
         for i, el in enumerate(t_objects):
-            wanted_heightx = img_kamp[i] / 255 * self.mushroom_heigt
-            # set height
-            # dot = FLOWER(img_kph[i]).scale(0.21)
-            dot = FLOWER(img_kph[i]).scale(0.51) # for special cases
-            dot.move_to(el.get_center()+OUT*wanted_heightx)
-            # append the pixels
-            self.flows.add(dot)
+            if img_kph[i] is not 0: # do not call FLOWER when phase is even 0
+                wanted_heightx = img_kamp[i] / 255 * self.mushroom_heigt
+                # set height
+                # dot = FLOWER(img_kph[i]).scale(0.21)
+                dot = FLOWER(img_kph[i]).scale(0.51) # for special cases
+                dot.move_to(el.get_center()+OUT*wanted_heightx)
+                # append the pixels
+                self.flows.add(dot)
         self.add(self.flows)
-
-
-
+    def clear_phase_flowers(self):
+        self.remove(self.flows)
     def set_subobject_opacity(self, img_array,offset):
         x, y = np.meshgrid(np.linspace(-1, 1, self.pixel_len), np.linspace(-1, 1, self.pixel_len))
         d = np.sqrt(x * x + y * y)
@@ -189,7 +187,7 @@ class Realspace(VMobject):
 ############ ANIMATION START
 
 
-scene="Minimal_save"  #newest and best version with only k_space
+#scene="Minimal_save"  #newest and best version with only k_space
 class Minimal(ThreeDScene):  # with real plane on the right
     def construct(self):
         self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
@@ -260,7 +258,7 @@ class Scene0_setup(ThreeDScene):  # with real plane on the right
         ## LET'S MOVE IT!###
 
 ################################IMPORTANT HERE
-scene="Scene1_amplitude"  #FULL ANIMATION SCENE amplitude
+#scene="Scene1_amplitude"  #FULL ANIMATION SCENE amplitude
 class Scene1_amplitude(ThreeDScene):  # with real plane on the right
     def perperation_math_and_disp_scene1(self, pixels, num_tracker, phase_tracker= None, pos_ALL=("UP", 1)):
         preset_position = pos_ALL[0]
@@ -307,15 +305,15 @@ class Scene1_amplitude(ThreeDScene):  # with real plane on the right
             self.add_fixed_in_frame_mobjects(real_out,real_text)
             self.add(k_disp)
             ## LET'S MOVE IT!###
-            self.play(
-                UpdateFromFunc(
-                    VGroup(k_disp,real_out),
+            def Compact_updater():
+                comp_updater=UpdateFromFunc(
+                    VGroup(k_disp, real_out),
                     lambda mob: mob.become(VGroup(
                         *self.perperation_math_and_disp_scene1(pixels, val_tracker, pos_ALL=pos_ALL)
                     ))
-                ),
-                val_tracker.set_value, tick_end_amp, rate_func=linear, run_time=3
-            )
+                )
+                return comp_updater
+            self.play(Compact_updater(),val_tracker.set_value, tick_end_amp, rate_func=linear, run_time=1)
             self.wait(2)
             ## blog2
             tick_next_amp = 0
@@ -329,27 +327,21 @@ class Scene1_amplitude(ThreeDScene):  # with real plane on the right
                 val_tracker.set_value, tick_next_amp, rate_func=linear, run_time=1
             )
 
-
-#scene="Scene2_with_phase_change"  #FULL ANIMATION SCENE phase
+#scene="Scene2_with_phase_change"  #FULL ANIMATION SCENE phase but no real_out
 class Scene2_with_phase_change(ThreeDScene):  # with real plane on the right
-    def MAKE_MATH_AND_DISP(self, pixels, num_tracker, phase_tracker= None, preset_position="UP"):
+    def perperation_math_and_disp_scene2(self, pixels, num_tracker, phase_tracker= None, preset_position="UP"):
         amp= (num_tracker.get_value())
         k_math=FourierMathJuggling.k_from_preset_minimal(pixels,preset_position=preset_position,amplitude=amp)
         if phase_tracker is not None: # in case for phase shifting
             k_math.phase_shift_single(phase_tracker.get_value(),preset_position=preset_position)
 
         img_kamp, img_kph = k_math.get_amp_and_ph()
-        # make the disply part:
+        # make the display part:
         k_disp = K_Space(pixel_len=pixels)  # setup the k_disp
         k_disp.fill_k_space(img_kamp=img_kamp, dots_lines=True)
         if phase_tracker is not None: # in case for phase shifting
             k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
-
-        real_out = Realspace(pixel_len=pixels)
-        img_real = k_math.get_real_out()
-        real_out.fill_real_space(pixels**2*abs(img_real)) ## why??? something with norm
-        real_out.scale(9 / pixels * k_plane_size * 0.3).to_edge(UR)
-        return k_disp,real_out
+        return k_disp, k_math
 
     def construct(self):
         UP_arrow= SVGMobject("arrow.svg",fill_color= ORANGE).shift(UP*4.5)
@@ -363,45 +355,104 @@ class Scene2_with_phase_change(ThreeDScene):  # with real plane on the right
         ##blog 1
         tick_start_amp = 0; tick_end_amp = 255
         val_tracker = ValueTracker(tick_start_amp)
-        k_disp,real_out =  self.MAKE_MATH_AND_DISP(pixels, num_tracker=val_tracker, preset_position="UP")
-        self.add_fixed_in_frame_mobjects(real_out)
+        k_disp =  self.perperation_math_and_disp_scene2(pixels, num_tracker=val_tracker, preset_position="UP")
         self.add(k_disp)
         ## LET'S MOVE IT!###
-        self.play(
+        self.play(  #lift the amplitude up
             UpdateFromFunc(
-                VGroup(k_disp,real_out),
+                VGroup(k_disp),
                 lambda mob: mob.become(VGroup(
-                    *self.MAKE_MATH_AND_DISP(pixels, val_tracker,preset_position="UP")
+                    self.perperation_math_and_disp_scene2(pixels, val_tracker, preset_position="UP")
                 ))
             ),
             val_tracker.set_value, tick_end_amp, rate_func=linear, run_time=1
         )
         self.wait()
-        tick_start_ph=0; tick_end_ph=360
+        #four times the phase moulation
+        # for i in [0,90,180,270]:
+        print("yesss")
+        ii=0
+        tick_start_ph=0+ii; tick_end_ph=90+ii
         phase_tracker= ValueTracker(tick_start_ph)
-        ## blog2
+        ## blog2 #start the phase modulation
+        def small_change(k,number):
+            print(number)
+            k_math.phase_shift_single
+            k.phase_shift_all(number)
+            k.set_phase_flowers()
+            return k
+
         self.play(
             UpdateFromFunc(
-                VGroup(k_disp, real_out),
-                lambda mob: mob.become(VGroup(
-                    *self.MAKE_MATH_AND_DISP(pixels, val_tracker, phase_tracker=phase_tracker, preset_position="UP")
-                ))
+                k_disp,
+                lambda mob: mob.become(small_change(k_disp, phase_tracker.get_value())
+                )
             ),
             phase_tracker.set_value, tick_end_ph, rate_func=linear, run_time=1
         )
+        print("hell3")
         self.wait()
 
         #blog3 :
-        tick_next_amp = 0
+        tick_next_amp = 0 # set again back down to 0
         self.play(
             UpdateFromFunc(
-                VGroup(k_disp, real_out),
+                VGroup(k_disp),
                 lambda mob: mob.become(VGroup(
-                    *self.MAKE_MATH_AND_DISP(pixels, val_tracker, preset_position="UP")
+                    self.perperation_math_and_disp_scene2(pixels, val_tracker, preset_position="UP")
                 ))
             ),
             val_tracker.set_value, tick_next_amp, rate_func=linear, run_time=1
         )
+
+scene="Scene2_with_phase_change_try2"  #FULL ANIMATION SCENE phase but no real_out
+class Scene2_with_phase_change_try2(ThreeDScene):  # with real plane on the right
+
+    def construct(self):
+        run_setting = {"run_time": 1 , "rate_func": linear}
+        # GENERAL:
+        postion_setting={"preset_position":"LEFT","center_dist": 1}
+        UP_arrow= SVGMobject("arrow.svg",fill_color= ORANGE).shift(UP*4.5)
+        UP_arrow.set_shade_in_3d(True)
+        self.add(UP_arrow)
+        #self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
+        self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
+        self.camera.frame_center.shift(2 * OUT)
+        pixels = 19 #this is how it shoud be
+        #pixels=5 # only shortly
+        #math_preperation:
+        k_math=FourierMathJuggling.k_from_preset_minimal(pixels,**postion_setting)
+        k_disp=K_Space(pixel_len=pixels)
+        img_kamp,img_kph= k_math.get_amp_and_ph()
+        k_disp.fill_k_space(img_kamp)
+        self.add(k_disp)
+        ##blog 1
+        tick_start_amp = 0; tick_end_amp = 255
+        val_tracker = ValueTracker(tick_start_amp)
+        def Tiny_UpdaterA(my_object, val_trackerX):
+            def small_change2(my_object):
+                k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting,
+                                                                   amplitude=val_trackerX.get_value())
+                my_object.fill_k_space(k_math.get_amp_and_ph()[0])
+                return my_object
+            return UpdateFromFunc(my_object, small_change2)
+        self.play(Tiny_UpdaterA(k_disp, val_tracker), val_tracker.set_value, tick_end_amp,**run_setting)
+
+        self.wait()  ##here starts the phase change
+
+        tick_start_ph = 0; tick_end_ph = 260
+        val_tracker = ValueTracker(tick_start_ph)
+        def Tiny_UpdaterB(my_object, val_trackerX):
+            def small_change2(my_object):
+                k_math.phase_shift_single(val_trackerX.get_value(),**postion_setting)
+                my_object.set_phase_flowers(*k_math.get_amp_and_ph())
+                return my_object
+
+            return UpdateFromFunc(my_object, small_change2)
+
+        self.play(Tiny_UpdaterB(k_disp, val_tracker), val_tracker.set_value, tick_end_ph, **run_setting)
+        self.wait()
+
 
 
 #scene="Fourier_In_k_Out"  #newest and best version with image+ fourier+ new image
@@ -504,9 +555,22 @@ class FilterkScene(ThreeDScene): #TODO : make updated!
 class spare_things(ThreeDScene): ### often used camera positions, etc.
     def construct(self):
         pass
+        ##idea with compact updater:
+
+        def Compact_updater():
+            comp_updater = UpdateFromFunc(
+                VGroup(k_disp, real_out),
+                lambda mob: mob.become(VGroup(
+                    *self.perperation_math_and_disp_scene1(pixels, val_tracker, pos_ALL=pos_ALL)
+                ))
+            )
+            return comp_updater
+
+        self.play(Compact_updater(), val_tracker.set_value, tick_end_amp, rate_func=linear, run_time=1)
+
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim     -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim    -l -p -n1,3  -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)

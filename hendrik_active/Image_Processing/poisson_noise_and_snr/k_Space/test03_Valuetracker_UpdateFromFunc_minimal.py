@@ -10,6 +10,7 @@ class lllll(Scene):
         val_tracker= ValueTracker(tick_start)
         dot_disp= self.get_modification(Dot(),val_tracker)
         self.add(dot_disp)
+
         self.play(
             UpdateFromFunc(
                 dot_disp,

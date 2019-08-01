@@ -9,6 +9,7 @@ class FourierMathJuggling:
         """
         self.pixels = pixels
         self.img_k_space = img_k_space
+        self.img_k_space_original=self.img_k_space.copy()
         self.img_realin= None # preset : no real input image
 
     ############ MAKE INPUT  ########
@@ -68,24 +69,19 @@ class FourierMathJuggling:
 
     ############ MAKE MAGIC  ########
 
-    def phase_shift_all(self, angle_deg):
-        pixels = self.pixels
-        self.img_k_space = self.img_k_space * np.exp(1j * np.deg2rad(angle_deg))
-
     def phase_shift_single(self, angle_deg, preset_position="LEFT",center_dist=1):
         pixels = self.pixels
         raster_size = (pixels, pixels)
         loc = FourierMathJuggling.pixel_position(raster_size, preset_position, center_dist)
-        self.img_k_space[loc] = self.img_k_space[loc]* np.exp(1j * np.deg2rad(angle_deg))
+        self.img_k_space[loc] = self.img_k_space_original[loc]* np.exp(1j * np.deg2rad(angle_deg))
     def phase_shift_all(self,angle_deg):
-        self.img_k_space =self.img_k_space* np.exp(1j * np.deg2rad(angle_deg))
+        self.img_k_space =self.img_k_space_original* np.exp(1j * np.deg2rad(angle_deg))
 
     def apply_transformations(self):
         pass
 
-    def modulate_amplitude(self,x):
-        self.img_k_space= x*self.img_k_space
-        pass
+    # def modulate_amplitude(self,x): #makes no sence
+    #     self.img_k_space= x*self.img_k_space
 
     ############ GET OUTPUT  ########
 
