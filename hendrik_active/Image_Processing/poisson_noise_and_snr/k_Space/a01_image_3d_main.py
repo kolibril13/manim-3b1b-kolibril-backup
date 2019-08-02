@@ -1,6 +1,7 @@
 from manimlib.imports import *
 from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FLOWER import FLOWER
 from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FourierMathJuggling import FourierMathJuggling
+from functools import partial
 
 global k_plane_size
 k_plane_size=0.7
@@ -421,39 +422,34 @@ class Scene2_with_phase_change(ThreeDScene):  # with real plane on the right
         #pixels = 19 #this is how it shoud be
         pixels=5 # only shortly
         #math_preperation:
+        value=0
         k_math=FourierMathJuggling.k_from_preset_minimal(pixels,**postion_setting)
         k_disp=K_Space(pixel_len=pixels)
         img_kamp,img_kph= k_math.get_amp_and_ph()
         k_disp.fill_k_space(img_kamp)
         self.add(k_disp)
         ##blog 1
-        tick_start_amp = 0; tick_end_amp = 255
-        val_tracker = ValueTracker(tick_start_amp)
-        def Tiny_UpdaterA(my_object, val_trackerX):
-            def modify_amp(my_object):
-                k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting,
-                                                                   amplitude=val_trackerX.get_value())
-                my_object.fill_k_space(k_math.get_amp_and_ph()[0])
-                return my_object
-            return UpdateFromFunc(my_object, modify_amp)
-        self.play(Tiny_UpdaterA(k_disp, val_tracker), val_tracker.set_value, tick_end_amp,**run_setting)
+        # tick_start_amp = 0; tick_end_amp = 255
+        # val_tracker = ValueTracker(tick_start_amp)
+        # def Tiny_UpdaterA(my_object, val_trackerX):
+        #     def modify_amp(my_object):
+        #         k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting,
+        #                                                            amplitude=val_trackerX.get_value())
+        #         my_object.fill_k_space(k_math.get_amp_and_ph()[0])
+        #         return my_object
+        #     return UpdateFromFunc(my_object, modify_amp)
+        # self.play(Tiny_UpdaterA(k_disp, val_tracker), val_tracker.set_value, tick_end_amp,**run_setting)
 
         self.wait()  ##here starts the phase change
-
-        def Tiny_UpdaterB(my_object, val_trackerX):
-            def modify_phase(my_object):
-                val=val_trackerX.get_value()
-                k_math.phase_shift_single(val,**postion_setting)
-                print(val, end= "\n")
-                my_object.set_phase_flowers(*k_math.get_amp_and_ph())
-                return my_object
-            return UpdateFromFunc(my_object, modify_phase)
-
-        val_tracker = ValueTracker(0)
-        tick_end_ph = 180 ; start=0
-        self.play(Tiny_UpdaterB(k_disp, val_tracker), val_tracker.set_value, tick_end_ph, **run_setting)
-
-
+        k_disp.val=0
+        val=0
+        def update_planet(mob,dt):
+            mob.val=int(mob.val + dt*100)+val
+            print(int(mob.val))
+            k_math.phase_shift_single(mob.val, **postion_setting)
+            mob.set_phase_flowers(*k_math.get_amp_and_ph())
+        k_disp.add_updater(update_planet)
+        self.wait(5)
 
 #scene="Fourier_In_k_Out"  #newest and best version with image+ fourier+ new image
 class Fourier_In_k_Out(ThreeDScene):  # with real plane on the right
@@ -571,6 +567,6 @@ class spare_things(ThreeDScene): ### often used camera positions, etc.
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim   -l -p  -n 1,6  -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim   -l -p    -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)
