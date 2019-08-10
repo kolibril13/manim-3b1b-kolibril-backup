@@ -2,6 +2,7 @@ from manimlib.imports import *
 from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FLOWER import FLOWER
 from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FourierMathJuggling import FourierMathJuggling
 from functools import partial
+from copy import deepcopy
 
 global k_plane_size
 k_plane_size=0.7
@@ -80,24 +81,39 @@ class K_Space(VMobject):
         self.remove(self.lines_and_dots)
 
     def set_phase_flowers(self, img_kamp, img_kph):
-        self.remove(self.flows)
         self.flows = VGroup()
         t_objects = [t for t in self.term.submobjects]
         img_kamp = img_kamp.flatten()
         img_kph = img_kph.flatten()
         # create dots array
         for i, el in enumerate(t_objects):
-            if img_kph[i] is not 0: # do not call FLOWER when phase is even 0
+            # if img_kph[i] is not 0: # do not call FLOWER when phase is even 0
+            wanted_heightx = img_kamp[i] / 255 * self.mushroom_heigt
+            # set height
+            # dot = FLOWER(img_kph[i]).scale(0.21)
+            flo  = FLOWER(img_kph[i]).scale(0.51) # for special cases
+            flo.move_to(el.get_center()+OUT*wanted_heightx)
+            #[fl.set_shade_in_3d(True) for fl in flo.submobjects()]
+            # append the pixels
+            self.flows.add(flo)
+        self.add(self.flows)
+    def set_phase_flowers_updater(self,img_kamp, img_kph):
+        self.new_flows= VGroup()
+        t_objects = [t for t in self.term.submobjects]
+        img_kamp = img_kamp.flatten()
+        img_kph = img_kph.flatten()
+        # create dots array
+        for i, el in enumerate(t_objects):
+            if img_kph[i] is not 0:  # do not call FLOWER when phase is even 0
                 wanted_heightx = img_kamp[i] / 255 * self.mushroom_heigt
                 # set height
                 # dot = FLOWER(img_kph[i]).scale(0.21)
-                dot = FLOWER(img_kph[i]).scale(0.51) # for special cases
-                dot.move_to(el.get_center()+OUT*wanted_heightx)
+                flo = FLOWER(img_kph[i]).scale(0.51)  # for special cases
+                flo.move_to(el.get_center() + OUT * wanted_heightx)
+                flo.set_shade_in_3d(True)
                 # append the pixels
-                self.flows.add(dot)
-        self.add(self.flows)
-    def clear_phase_flowers(self):
-        self.remove(self.flows)
+                self.new_flows.add(flo)
+        self.flows.become(self.new_flows)
     def set_subobject_opacity(self, img_array,offset):
         x, y = np.meshgrid(np.linspace(-1, 1, self.pixel_len), np.linspace(-1, 1, self.pixel_len))
         d = np.sqrt(x * x + y * y)
@@ -406,50 +422,121 @@ class Scene2_with_phase_change_crap(ThreeDScene):  # with real plane on the righ
             val_tracker.set_value, tick_next_amp, rate_func=linear, run_time=1
         )
 
-scene="Scene2_with_phase_change"  #FULL ANIMATION SCENE phase but no real_out
+#scene="Scene2_with_phase_change"  #FULL ANIMATION SCENE phase but no real_out
 class Scene2_with_phase_change(ThreeDScene):  # with real plane on the right
+    def construct(self):
+        run_setting = {"run_time": 1, "rate_func": linear}
+        # GENERAL:
+        postion_setting = {"preset_position": "LEFT", "center_dist": 1}
+        UP_arrow = SVGMobject("arrow.svg", fill_color=ORANGE).shift(UP * 4.5)
+        UP_arrow.set_shade_in_3d(True)
+        self.add(UP_arrow)
+        # self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
+        self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
+        self.camera.frame_center.shift(2 * OUT)
+        # pixels = 19 #this is how it shoud be
+        pixels = 5  # only shortly
+        # math_preperation:
+        value = 0
+        k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting)
+        k_disp = K_Space(pixel_len=pixels)
+        img_kamp, img_kph = k_math.get_amp_and_ph()
+        k_disp.fill_k_space(img_kamp)
+        self.add(k_disp)
+        ##blog 1
+        tick_start_amp = 0;
+        tick_end_amp = 255
+        val_tracker = ValueTracker(tick_start_amp)
+
+        def Tiny_UpdaterA(my_object, val_trackerX):
+            def modify_amp(my_object):
+                k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting,
+                                                                   amplitude=val_trackerX.get_value())
+                my_object.fill_k_space(k_math.get_amp_and_ph()[0])
+                return my_object
+
+            return UpdateFromFunc(my_object, modify_amp)
+
+        self.play(Tiny_UpdaterA(k_disp, val_tracker), val_tracker.set_value, tick_end_amp, **run_setting)
+        self.wait()  ##here starts the phase change
+
+        # blog 2
+        tick_start_ph = 0;
+        tick_end_ph = 180
+        val_tracker = ValueTracker(tick_start_ph)
+
+        def Tiny_UpdaterB(my_object, val_trackerX):
+            def modify_ph(mob):
+                print(val_trackerX.get_value())
+                k_math.phase_shift_single(val_trackerX.get_value(), **postion_setting)
+                mob.set_phase_flowers(*k_math.get_amp_and_ph())
+                return mob
+
+            return UpdateFromFunc(my_object, modify_ph)
+
+        self.play(val_tracker.set_value, tick_end_ph, Tiny_UpdaterB(k_disp, val_tracker), **run_setting)
+        self.wait()  ##here starts the phase change
+
+        # k_disp.val=0
+        # val=0
+        # def update_planet(mob,dt):
+        #     mob.val=int(mob.val + dt*100)+val
+        #     print(int(mob.val))
+        #     k_math.phase_shift_single(mob.val, **postion_setting)
+        #     mob.set_phase_flowers(*k_math.get_amp_and_ph())
+        # k_disp.add_updater(update_planet)
+        # self.wait(5)
+
+scene = "Scene2_with_phase_change_try3"  # FULL ANIMATION SCENE phase but no real_out
+class Scene2_with_phase_change_try3(ThreeDScene):  # with real plane on the right
 
     def construct(self):
-        run_setting = {"run_time": 2  , "rate_func": linear}
+        run_setting = {"run_time": 1  , "rate_func": linear}
         # GENERAL:
         postion_setting={"preset_position":"LEFT","center_dist": 1}
         UP_arrow= SVGMobject("arrow.svg",fill_color= ORANGE).shift(UP*4.5)
         UP_arrow.set_shade_in_3d(True)
         self.add(UP_arrow)
-        #self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)  # 2.5D
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
         self.camera.frame_center.shift(2 * OUT)
         #pixels = 19 #this is how it shoud be
-        pixels=5 # only shortly
+        pixels=7 # only shortly
         #math_preperation:
-        value=0
         k_math=FourierMathJuggling.k_from_preset_minimal(pixels,**postion_setting)
         k_disp=K_Space(pixel_len=pixels)
         img_kamp,img_kph= k_math.get_amp_and_ph()
         k_disp.fill_k_space(img_kamp)
         self.add(k_disp)
-        ##blog 1
-        # tick_start_amp = 0; tick_end_amp = 255
-        # val_tracker = ValueTracker(tick_start_amp)
-        # def Tiny_UpdaterA(my_object, val_trackerX):
-        #     def modify_amp(my_object):
-        #         k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting,
-        #                                                            amplitude=val_trackerX.get_value())
-        #         my_object.fill_k_space(k_math.get_amp_and_ph()[0])
-        #         return my_object
-        #     return UpdateFromFunc(my_object, modify_amp)
-        # self.play(Tiny_UpdaterA(k_disp, val_tracker), val_tracker.set_value, tick_end_amp,**run_setting)
+        # my_ampli_tracker = ValueTracker(0)
+        # def update_ampli(mob):
+        #     # mob.shift(my_ampli_tracker.get_value() *UP)
+        #     k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting,amplitude=my_ampli_tracker.get_value())
+        #     mob.fill_k_space(k_math.get_amp_and_ph()[0])
+        #     return mob
+        # end_val=255
+        # self.play(my_ampli_tracker.increment_value, end_val,  # <- "Master" update first
+        #          UpdateFromFunc(k_disp, update_ampli),
+        #     rate_func=linear)
+        k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting)
+        k_disp = K_Space(pixel_len=pixels)
+        img_kamp, img_kph = k_math.get_amp_and_ph()
+        k_disp.fill_k_space(img_kamp)
+        k_disp.set_phase_flowers((img_kamp * 10 / 360), img_kph)
+        self.add(k_disp)
 
-        self.wait()  ##here starts the phase change
-        k_disp.val=0
-        val=0
-        def update_planet(mob,dt):
-            mob.val=int(mob.val + dt*100)+val
-            print(int(mob.val))
-            k_math.phase_shift_single(mob.val, **postion_setting)
-            mob.set_phase_flowers(*k_math.get_amp_and_ph())
-        k_disp.add_updater(update_planet)
-        self.wait(5)
+        def update_phase(mob):
+            val= my_phase_tracker.get_value()
+            k_math.phase_shift_single(val, **postion_setting)
+            img_kamp, img_kph=k_math.get_amp_and_ph()
+            mob.set_phase_flowers_updater (img_kamp, img_kph)
+            return mob
+        my_phase_tracker = ValueTracker(0)
+        for i in range(0,4):
+            self.play(my_phase_tracker.increment_value, 90,  # <- "Master" update first
+                      UpdateFromFunc(k_disp, update_phase),
+                      rate_func=linear)
+            self.wait(1)
+
 
 #scene="Fourier_In_k_Out"  #newest and best version with image+ fourier+ new image
 class Fourier_In_k_Out(ThreeDScene):  # with real plane on the right
@@ -537,7 +624,6 @@ class FilterkScene(ThreeDScene): #TODO : make updated!
         self.play(Write(magic_plane), run_time=1)
         # #make the filtering:
         img2=np.uint8(img*(1-my_plane.gauss_array_2d()))
-        print(img2)
         self.wait(10)
         my_plane2= K_Space(pixel_len=pixels)
         my_plane2.set_x(0) #not needed anymore
@@ -567,6 +653,6 @@ class spare_things(ThreeDScene): ### often used camera positions, etc.
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim   -l -p    -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim    -p -l     -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)
