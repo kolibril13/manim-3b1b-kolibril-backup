@@ -1,5 +1,7 @@
 from manimlib.imports import *
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.a01_image_3d_main import K_Space,Realspace
+from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.a01_image_3d_main import Realspace
+from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.KSpace import KSpace
+
 
 class Image2dTesting(Scene):
     def construct(self):
@@ -11,7 +13,7 @@ class Image2dTesting(Scene):
         img_k_space = r * np.exp(1j * phi_rad)
         img_kamp = np.abs(img_k_space)
         img_kph = (np.angle(img_k_space, deg=True))
-        my_plane= K_Space(pixel_len=pixels)
+        my_plane= KSpace(pixel_len=pixels)
         my_plane.set_phase_flowers(img_kamp,img_kph )
         my_plane.move_to(ORIGIN)
         my_plane.fill_k_space(img_kamp)
@@ -57,7 +59,7 @@ class Image2dFourierScene(Scene):
         # imp_fourier_instance.phase_shift(190)
         print("ss")
         img_kamp,img_kph= imp_fourier_instance.get_amp_and_ph()
-        my_plane = K_Space(pixel_len=pixels) ###
+        my_plane = KSpace(pixel_len=pixels) ###
         my_plane.set_phase_flowers(img_kamp, img_kph)
         my_plane.move_to(ORIGIN)
         my_plane.scale(6/pixels)
@@ -86,7 +88,7 @@ class Image2dFourierSceneEX(Scene):
         gu.phase_shift(180)
         print("ss")
         img_kamp,img_kph= gu.get_amp_and_ph()
-        my_plane = K_Space(pixel_len=pixels) ###
+        my_plane = KSpace(pixel_len=pixels) ###
         my_plane.set_phase_flowers(img_kamp, img_kph)
         my_plane.move_to(ORIGIN)
         my_plane.scale(6/pixels)

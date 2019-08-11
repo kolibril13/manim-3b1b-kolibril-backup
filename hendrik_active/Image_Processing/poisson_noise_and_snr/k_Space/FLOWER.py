@@ -49,10 +49,10 @@ class FLOWER(VMobject):
                 Ellipse(height=0.7).rotate(2 * PI / 3)
             ).set_style(fill_opacity=1, fill_color=bloss_col, stroke_width=0).scale(self.scale_fac*0.9)
             nekta = Dot(fill_color=YELLOW).scale(self.scale_fac*2)
-            # bloss.shift(OUT * 0.02)#
-            # nekta.shift(OUT * 0.03)
-            bloss.shift(OUT * 0.2)#
-            nekta.shift(OUT * 0.4)
+            bloss.shift(OUT * 0.02)#
+            nekta.shift(OUT * 0.03)
+            # bloss.shift(OUT * 0.2)#
+            # nekta.shift(OUT * 0.4)
             #bloss.set_shade_in_3d(True)
             #nekta.set_shade_in_3d(True)
             self.add( bloss,nekta)

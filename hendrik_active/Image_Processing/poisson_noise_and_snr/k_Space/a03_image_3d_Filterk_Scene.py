@@ -1,7 +1,9 @@
 from manimlib.imports import *
 import cmath
 from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FLOWER import FLOWER
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.a01_image_3d_main import K_Space,Realspace
+from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.a01_image_3d_main import Realspace
+from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.KSpace import KSpace
+
 global k_plane_size
 k_plane_size=0.7
 
@@ -41,7 +43,7 @@ class Nearly_Empty_Fourier(ThreeDScene):
             real_out_ar =  np.fft.ifft2(k_space_ar_shift)
 
             # setup the k_plane
-            k_plane = K_Space(pixel_len=pixels)
+            k_plane = KSpace(pixel_len=pixels)
             k_plane.set_x(0)
             k_plane.set_y(0)
             k_plane.set_z(-0.01)
@@ -117,7 +119,7 @@ class More_Filled_Fourier(ThreeDScene):
             real_out_ar =  np.fft.ifft2(k_space_ar_shift)
 
             # setup the k_plane
-            k_plane = K_Space(pixel_len=pixels)
+            k_plane = KSpace(pixel_len=pixels)
             k_plane.set_x(0)
             k_plane.set_y(0)
             k_plane.set_z(-0.01)
