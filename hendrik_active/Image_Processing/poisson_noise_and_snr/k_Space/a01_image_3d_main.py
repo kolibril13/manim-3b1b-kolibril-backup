@@ -23,7 +23,7 @@ class Minimal(ThreeDScene):  # with real plane on the right
 
         # make the disply part:
         k_disp = KSpace(pixel_len=pixels)  # setup the k_disp
-        k_disp.fill_k_space(img_kamp=img_kamp, dots_lines=True)
+        k_disp.fill_k_space_updater(img_kamp=img_kamp)
         # k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
 
         real_out = Realspace(pixel_len=pixels)
@@ -48,7 +48,7 @@ class Scene0_setup(ThreeDScene):  # with real plane on the right
         img_kamp, img_kph = k_math.get_amp_and_ph()
         # make the disply part:
         k_disp = KSpace(pixel_len=pixels)  # setup the k_disp
-        k_disp.fill_k_space(img_kamp=img_kamp, dots_lines=False)
+        k_disp.fill_k_space_updater(img_kamp=img_kamp, dots_lines=False)
         if phase_tracker is not None: # in case for phase shifting
             k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
 
@@ -80,127 +80,6 @@ class Scene0_setup(ThreeDScene):  # with real plane on the right
 
         ## LET'S MOVE IT!###
 
-################################IMPORTANT HERE
-#scene="Scene1_amplitude"  #FULL ANIMATION SCENE amplitude
-class Scene1_amplitude(ThreeDScene):  # with real plane on the right
-    def perperation_math_and_disp_scene1(self, pixels, num_tracker, phase_tracker= None, pos_ALL=("UP", 1)):
-        preset_position = pos_ALL[0]
-        center_dist = pos_ALL[1]
-        amp= (num_tracker.get_value())
-        k_math=FourierMathJuggling.k_from_preset_minimal(
-            pixels,preset_position=preset_position,amplitude=amp,center_dist=center_dist)
-        if phase_tracker is not None: # in case for phase shifting
-            k_math.phase_shift_single(phase_tracker.get_value(),preset_position=preset_position,center_dist=center_dist)
-
-        img_kamp, img_kph = k_math.get_amp_and_ph()
-        # make the disply part:
-        k_disp = KSpace(pixel_len=pixels)  # setup the k_disp
-        k_disp.fill_k_space(img_kamp=img_kamp, dots_lines=True)
-        if phase_tracker is not None: # in case for phase shifting
-            k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
-
-        real_out = Realspace(pixel_len=pixels)
-        img_real = k_math.get_real_out()
-        real_out.fill_real_space(pixels**2*abs(img_real)) ## why??? something with norm
-        real_out.scale(9 / pixels * k_plane_size * 0.3).to_edge(UR)
-        return k_disp,real_out
-
-    def construct(self):
-        Order= [("LEFT",3),("LEFT",1),("UP",1),("UP",3),("DIAG",2),("UP",0)]
-        self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
-        self.camera.frame_center.shift(2 * OUT)
-        #yess
-        for o_step in range(0,len(Order)):
-            pos_ALL= Order[o_step]
-            UP_arrow= SVGMobject("arrow.svg",fill_color= ORANGE).shift(UP*4.5)
-            UP_arrow.set_shade_in_3d(True)
-            self.add(UP_arrow)
-            k_text = TextMobject("K-Space", fill_color=ORANGE).shift(DOWN * 4).scale(2)
-            #k_text.set_shade_in_3d(True)
-            self.add(k_text)
-
-            pixels = 19
-            ##blog 1
-            tick_start_amp = 0; tick_end_amp = 255
-            val_tracker = ValueTracker(tick_start_amp)
-            k_disp,real_out =  self.perperation_math_and_disp_scene1(pixels, num_tracker=val_tracker, pos_ALL=pos_ALL)
-            real_text = TextMobject("Real-Space").scale(0.75).next_to(real_out,DOWN)
-            self.add_fixed_in_frame_mobjects(real_out,real_text)
-            self.add(k_disp)
-            ## LET'S MOVE IT!###
-            def Compact_updater():
-                comp_updater=UpdateFromFunc(
-                    VGroup(k_disp, real_out),
-                    lambda mob: mob.become(VGroup(
-                        *self.perperation_math_and_disp_scene1(pixels, val_tracker, pos_ALL=pos_ALL)
-                    ))
-                )
-                return comp_updater
-            self.play(Compact_updater(),val_tracker.set_value, tick_end_amp, rate_func=linear, run_time=1)
-            self.wait(2)
-            ## blog2
-            tick_next_amp = 0
-            self.play(
-                UpdateFromFunc(
-                    VGroup(k_disp, real_out),
-                    lambda mob: mob.become(VGroup(
-                        *self.perperation_math_and_disp_scene1(pixels, val_tracker, pos_ALL=pos_ALL)
-                    ))
-                ),
-                val_tracker.set_value, tick_next_amp, rate_func=linear, run_time=1
-            )
-
-
-scene = "Scene2_with_phase_change_try3"  # FULL ANIMATION SCENE phase but no real_out
-class Scene2_with_phase_change_try3(ThreeDScene):  # with real plane on the right
-
-    def construct(self):
-        run_setting = {"run_time": 1  , "rate_func": linear}
-        # GENERAL:
-        postion_setting={"preset_position":"LEFT","center_dist": 1}
-        UP_arrow= SVGMobject("arrow.svg",fill_color= ORANGE).shift(UP*4.5)
-        UP_arrow.set_shade_in_3d(True)
-        self.add(UP_arrow)
-        self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
-        self.camera.frame_center.shift(2 * OUT)
-        #pixels = 19 #this is how it shoud be
-        pixels=7 # only shortly
-        #math_preperation:
-        k_math=FourierMathJuggling.k_from_preset_minimal(pixels,**postion_setting)
-        k_disp= KSpace(pixel_len=pixels)
-        img_kamp,img_kph= k_math.get_amp_and_ph()
-        k_disp.fill_k_space(img_kamp)
-        self.add(k_disp)
-        # my_ampli_tracker = ValueTracker(0)
-        # def update_ampli(mob):
-        #     # mob.shift(my_ampli_tracker.get_value() *UP)
-        #     k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting,amplitude=my_ampli_tracker.get_value())
-        #     mob.fill_k_space(k_math.get_amp_and_ph()[0])
-        #     return mob
-        # end_val=255
-        # self.play(my_ampli_tracker.increment_value, end_val,  # <- "Master" update first
-        #          UpdateFromFunc(k_disp, update_ampli),
-        #     rate_func=linear)
-        k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting)
-        k_disp = KSpace(pixel_len=pixels)
-        img_kamp, img_kph = k_math.get_amp_and_ph()
-        k_disp.fill_k_space(img_kamp)
-        k_disp.set_phase_flowers((img_kamp * 10 / 360), img_kph)
-        self.add(k_disp)
-
-        def update_phase(mob):
-            val= my_phase_tracker.get_value()
-            k_math.phase_shift_single(val, **postion_setting)
-            img_kamp, img_kph=k_math.get_amp_and_ph()
-            mob.set_phase_flowers_updater (img_kamp, img_kph)
-            mob.set_shade_in_3d(True)
-            return mob
-        my_phase_tracker = ValueTracker(0)
-        for i in range(0,1):
-            self.play(my_phase_tracker.increment_value, 90,  # <- "Master" update first
-                      UpdateFromFunc(k_disp, update_phase),
-                      rate_func=linear)
-            self.wait(1)
 
 
 #scene="Fourier_In_k_Out"  #newest and best version with image+ fourier+ new image
@@ -220,7 +99,7 @@ class Fourier_In_k_Out(ThreeDScene):  # with real plane on the right
             img_kamp = 20*np.log2(img_kamp)
         # make the disply part:
         k_disp = KSpace(pixel_len=pixels)   # setup the k_disp
-        k_disp.fill_k_space(img_kamp=(img_kamp), dots_lines=True)
+        k_disp.fill_k_space_updater(img_kamp=(img_kamp))
         #k_disp.set_phase_flowers(img_kamp=(img_kamp), img_kph=img_kph)
 
         real_in = Realspace(pixel_len=pixels)
@@ -240,7 +119,7 @@ class Fourier_In_k_Out(ThreeDScene):  # with real plane on the right
 
 class MovingScene(ThreeDScene):
     pass
-
+# still great value!
 class FilterkScene(ThreeDScene): #TODO : make updated!
     def construct(self):
         # axes:
@@ -277,7 +156,7 @@ class FilterkScene(ThreeDScene): #TODO : make updated!
         my_plane.set_y(0)
         my_plane.set_z(0)
         my_plane.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
-        my_plane.fill_k_space(img_kamp=fourier_s, dots_lines=True)
+        my_plane.fill_k_space_updater(img_kamp=fourier_s)
         #my_plane.set_phase_flowers(fourier_s, fourier_s)
         my_plane.set_shade_in_3d(True)
         # self.play(TransformFromCopy(r,my_plane))
@@ -294,7 +173,7 @@ class FilterkScene(ThreeDScene): #TODO : make updated!
         my_plane2.set_x(0) #not needed anymore
         my_plane2.set_y(0)
         my_plane2.scale_about_point(9 / pixels * k_plane_size, ORIGIN)
-        my_plane2.fill_k_space(img_kamp=img2, dots_lines=True)
+        my_plane2.fill_k_space_updater(img_kamp=img2)
         self.play(Transform(magic_plane,magic_gauss),
                    Transform(my_plane,my_plane2),run_time=1)
         # # self.wait(10)

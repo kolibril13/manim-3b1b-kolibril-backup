@@ -9,7 +9,6 @@ class KSpace(VMobject):
         "pixel_len":23,
         "mushroom_heigt":1.1,
         "magic_offset_z":k_plane_size
-
     }
     def __init__(self , **kwargs):
         digest_config(self, kwargs)
@@ -28,13 +27,20 @@ class KSpace(VMobject):
         self.term.add(*square_ALL)
         self.term.set_x(0)
         self.term.set_y(0)
-        self.term.set_z(0.01)  ## why again?
+        self.term.set_z(0.00001)  ## Important, because otherwise dots are visible ...
         self.term.scale_about_point(9 / self.pixel_len * k_plane_size, ORIGIN)
-        self.term.set_shade_in_3d(True)
+        # self.term.set_shade_in_3d(True)
         self.add(self.term) ## better return term???
+        self.add(self.flows)
+        self.add(self.lines_and_dots)
+        # lastly the middle point
+        # ORI_POINT = Dot(fill_color=ORANGE).shift(OUT * 0.1).scale(1.5)
+        # ORI_POINT.set_shade_in_3d(True)
+        ORI_POINT = Dot(fill_color=ORANGE).scale(1.5)
+        ORI_POINT.set_z(0.0001)
+        self.add(ORI_POINT)
 
-    def fill_k_space(self, img_kamp, dots_lines=True): #empty it first, then refill
-        self.remove(self.lines_and_dots)
+    def fill_k_space_updater(self, img_kamp): #empty it first, then refill
         t_objects = [t for t in self.term.submobjects]
         img_kamp = img_kamp.flatten()
         # create dots array
@@ -45,9 +51,8 @@ class KSpace(VMobject):
             wanted_color = interpolate_color(BLACK, WHITE, img_kamp[i] / 255)
             el.set_color(wanted_color)
 
-            if dots_lines == True:
-                wanted_height = img_kamp[i] / 255 * self.mushroom_heigt
-
+            wanted_height = img_kamp[i] / 255 * self.mushroom_heigt
+            if wanted_height != 0:
                 # set height
                 dot = Dot()
                 dot.move_to(el.get_center())
@@ -63,34 +68,10 @@ class KSpace(VMobject):
                 self.dots.add(dot)
                 self.lines.add(line)
 
-        if dots_lines == True:
-            self.lines_and_dots=VGroup(self.dots,self.lines).set_shade_in_3d(True)
-            self.add(self.lines_and_dots)
-        #lastly the middle point
-        ORI_POINT = Dot(fill_color=ORANGE).shift(OUT * 0.01).scale(1.5)
-        ORI_POINT.set_shade_in_3d(True)
-        self.add(ORI_POINT)
+        self.new_lines_and_dots=VGroup(self.dots,self.lines)#.set_shade_in_3d(True)
+        self.lines_and_dots.become(self.new_lines_and_dots)
 
-    def clear_k_space(self):
-        self.remove(self.lines_and_dots)
 
-    def set_phase_flowers(self, img_kamp, img_kph):
-        self.flows = VGroup()
-        t_objects = [t for t in self.term.submobjects]
-        img_kamp = img_kamp.flatten()
-        img_kph = img_kph.flatten()
-        # create dots array
-        for i, el in enumerate(t_objects):
-            if img_kph[i] is not 0: # do not call FLOWER when phase is even 0
-                wanted_heightx = img_kamp[i] / 255 * self.mushroom_heigt
-                # set height
-                # dot = FLOWER(img_kph[i]).scale(0.21)
-                flo  = FLOWER(img_kph[i]).scale(0.51) # for special cases
-                flo.move_to(el.get_center()+OUT*wanted_heightx)
-                #[fl.set_shade_in_3d(True) for fl in flo.submobjects()]
-                # append the pixels
-                self.flows.add(flo)
-        self.add(self.flows)
     def set_phase_flowers_updater(self,img_kamp, img_kph):
         self.new_flows= VGroup()
         t_objects = [t for t in self.term.submobjects]

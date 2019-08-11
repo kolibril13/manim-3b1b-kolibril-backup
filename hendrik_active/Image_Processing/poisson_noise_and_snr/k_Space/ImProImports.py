@@ -12,3 +12,4 @@ class Image_coordinate_system(VMobject):
         # k_text.set_shade_in_3d(True)
         self.add(k_text)
         self.add(UP_arrow)
+

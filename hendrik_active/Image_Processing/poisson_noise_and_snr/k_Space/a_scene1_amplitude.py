@@ -8,8 +8,8 @@ k_plane_size=0.7
 
 
 ################################IMPORTANT HERE
-scene = "lift_ampl"  # FULL ANIMATION SCENE phase with real out
-class lift_ampl(ThreeDScene):  # with real plane on the right
+scene = "Scene01_different_amplitudes"  # FULL ANIMATION SCENE phase with real out
+class Scene01_different_amplitudes(ThreeDScene):  # with real plane on the right
 
     def construct(self):
 
@@ -17,14 +17,15 @@ class lift_ampl(ThreeDScene):  # with real plane on the right
         self.camera.frame_center.shift(2 * OUT)
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
 
-        #pixels = 19 #this is how it shoud be
-        pixels=7 # only sh ortly
+        pixels = 19 #this is how it shoud be
+        #pixels=7 # only sh ortly
 
         #math_preperation:
         k_math=FourierMathJuggling.k_from_preset_minimal(pixels,amplitude=0)
         k_disp= KSpace(pixel_len=pixels)
         img_kamp,img_kph= k_math.get_amp_and_ph()
-        k_disp.fill_k_space(img_kamp)
+        k_disp.fill_k_space_updater(img_kamp)
+        k_disp.set_shade_in_3d(True)
         self.add(k_disp)
 
         real_out = Realspace(pixel_len=pixels)
@@ -35,16 +36,17 @@ class lift_ampl(ThreeDScene):  # with real plane on the right
         self.add_fixed_in_frame_mobjects(real_out, real_text)
 
         ###HERE STARTS THE LOOP:
-        Order= [("LEFT",3),("LEFT",1)]
-        Order= [("DIAG",2)]
-        postion_setting={"preset_position":"LEFT","center_dist": 1}
+        # Order= [("LEFT",3),("LEFT",1),("UP",1),("UP",3),("DIAG",2),("UP",0)]
+        Order= [("LEFT",1),("LEFT",3),("UP",3),("UP",1),("UP",-1),("DIAG",2),("DIAG",1),("UP",0)]
+        #Order= [("LEFT",1),("UP",0)]
+        # Order= [("LEFT",3),("LEFT",1),("DIAG",2)]
         for o_step in range(0, len(Order)):
             postion_setting = {"preset_position":Order[o_step][0] ,"center_dist": Order[o_step][1]}
             #lift the amplitude
             def update_ampli(mob):
                 k_math = FourierMathJuggling.k_from_preset_minimal(pixels, **postion_setting,amplitude=my_ampli_tracker.get_value())
                 # print(my_ampli_tracker.get_value())
-                mob.fill_k_space(k_math.get_amp_and_ph()[0])
+                mob.fill_k_space_updater(k_math.get_amp_and_ph()[0])
                 img_real= k_math.get_real_out()
                 real_out.fill_real_space(pixels ** 2 * img_real)
                 return mob
@@ -52,17 +54,17 @@ class lift_ampl(ThreeDScene):  # with real plane on the right
             my_ampli_tracker = ValueTracker(start_val)
             self.play(my_ampli_tracker.increment_value, end_val,
                       UpdateFromFunc(k_disp, update_ampli),
-                 rate_func=linear,run_time=2)
-            #self.wait(1)
+                 rate_func=linear,run_time=2.5)
+            self.wait(2)
             start_val=255;end_val=0
             my_ampli_tracker = ValueTracker(start_val)
-            self.play(my_ampli_tracker.decrease_value , end_val,
+            self.play(my_ampli_tracker.set_value , end_val,
                       UpdateFromFunc(k_disp, update_ampli),
-                      rate_func=linear, run_time=2)
-            self.wait()
-
+                      rate_func=linear, run_time=1.5 )
+            self.wait(0.3)
+        self.wait(2)
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim     -p -l    -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim     -p     -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)
