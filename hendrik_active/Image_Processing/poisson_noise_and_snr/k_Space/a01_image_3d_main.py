@@ -1,9 +1,6 @@
-
-
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.KSpace import KSpace
+from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.ImProImports import \
+    FourierMathJuggling,Image_coordinate_system, KSpace, Realspace
 from manimlib.imports import *
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FourierMathJuggling import FourierMathJuggling
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.Realspace import Realspace
 
 global k_plane_size
 k_plane_size=0.7
