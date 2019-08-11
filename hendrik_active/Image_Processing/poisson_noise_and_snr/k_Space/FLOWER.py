@@ -70,10 +70,11 @@ class FLOWER(VMobject):
             nekta.set_color(interpolate_color(self.color2, self.color4,last_param))
            # [i.scale(1-last_param) for i in self.submobjects]
             #[i.set_style(stroke_width=1) for i in self.submobjects]
-            if 355 <= self.a_deg:
-                last_last_param=  (self.a_deg-355)/5
+            if 340 <= self.a_deg:
+                last_last_param=  (self.a_deg-340)/20
                 bloss.set_style(fill_opacity=1-last_last_param)
                 [i.scale(1 - last_last_param) for i in self.submobjects]
+
                 #[i.set_style(stroke_width=1) for i in self.submobjects]
                 # [i.set_style(fill_opacity=1-last_last_param) for i in self.submobjects]
 

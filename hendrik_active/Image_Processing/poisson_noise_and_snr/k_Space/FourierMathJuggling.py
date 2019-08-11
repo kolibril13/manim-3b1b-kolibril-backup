@@ -67,10 +67,12 @@ class FourierMathJuggling:
         raster_size = (pixels, pixels)
         img_k_space = np.zeros(raster_size, dtype=complex)
         loc = FourierMathJuggling.pixel_position(raster_size, preset_position, center_dist)
-        if center_dist is not 0: #give it a small phase shift for nicer visualisation
-            img_k_space[loc] = amplitude*np.exp(1j*np.pi/2)
-        else:
-            img_k_space[loc] = amplitude # but not for the center
+        img_k_space[loc] = amplitude # but not for the center
+
+        # if center_dist is not 0: #give it a small phase shift for nicer visualisation
+        #     img_k_space[loc] = amplitude*np.exp(1j*np.pi/2)
+        # else:
+        #     img_k_space[loc] = amplitude # but not for the center
 
         return FourierMathJuggling(img_k_space, pixels)
 

@@ -12,7 +12,6 @@ scene = "Scene01_different_amplitudes"  # FULL ANIMATION SCENE phase with real o
 class Scene01_different_amplitudes(ThreeDScene):  # with real plane on the right
 
     def construct(self):
-
         self.add(Image_coordinate_system())
         self.camera.frame_center.shift(2 * OUT)
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D

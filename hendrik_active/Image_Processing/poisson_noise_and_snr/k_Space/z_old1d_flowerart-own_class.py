@@ -1,3 +1,4 @@
+print("hello")
 from manimlib.imports import *
 global s, e, ste
 s=0
@@ -64,7 +65,7 @@ class FLOWER(VMobject):
 
 
 
-class MAIN(Scene):
+class artwork(Scene):
     CONFIG = {
         "flower_value_start": 0,
         "flower_value_end": 360
@@ -101,7 +102,6 @@ class MAIN(Scene):
         # self.wait()
 
 if __name__ == "__main__":
-    module_name = os.path.basename(__file__)
-    command_A = "manim  -s  -c '#2B2B2B' --video_dir ~/Downloads/  "
-    command_B = module_name + " " +"MAIN"
-    os.system(command_A + command_B)
+     module_name = os.path.basename(__file__)
+     command_A = "manim  -s -p -c '#2B2B2B' --video_dir ~/Downloads/ " + module_name + " artwork  "
+     os.system(command_A )

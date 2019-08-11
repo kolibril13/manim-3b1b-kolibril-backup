@@ -1,6 +1,6 @@
+from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.ImProImports import \
+    FourierMathJuggling,Image_coordinate_system, KSpace, Realspace
 from manimlib.imports import *
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.a01_image_3d_main import Realspace
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.KSpace import KSpace
 
 scene="Image2dTesting"
 class Image2dTesting(Scene):
