@@ -1,6 +1,6 @@
 from PIL import Image
 import numpy as np ##here???
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.IMAGE_star import star
+
 
 class FourierMathJuggling:
     def __init__(self, img_k_space, pixels):
@@ -26,8 +26,11 @@ class FourierMathJuggling:
         ## setup for the whole class
         self.img_k_space = fshift
         self.img_realin = img_array
+        self.img_k_space_original=self.img_k_space.copy()
+
 
     def k_from_real_in_from_star(self):  # init  ## set the input
+        from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.IMAGE_star import star
         img_array= star
         ##even make forier transform yet:
         f = np.fft.fft2(img_array)
@@ -64,7 +67,7 @@ class FourierMathJuggling:
         raster_size = (pixels, pixels)
         img_k_space = np.zeros(raster_size, dtype=complex)
         loc = FourierMathJuggling.pixel_position(raster_size, preset_position, center_dist)
-        img_k_space[loc] = amplitude
+        img_k_space[loc] = amplitude*np.exp(1j*np.pi/2)
         return FourierMathJuggling(img_k_space, pixels)
 
     ############ MAKE MAGIC  ########

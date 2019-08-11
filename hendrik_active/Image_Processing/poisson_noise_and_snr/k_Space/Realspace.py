@@ -29,4 +29,7 @@ class Realspace(VMobject):
         img_real = img_real.flatten()
         #interpolate the colors from array
         for i, el in enumerate(t_objects):
-            el.set_color(interpolate_color(BLACK, WHITE, img_real[i] / 255)) #change!!
+            if img_real[i] < 0:
+                el.set_color(BLACK)
+            else:
+                el.set_color(interpolate_color(BLACK, WHITE, img_real[i] / 255)) #change!!

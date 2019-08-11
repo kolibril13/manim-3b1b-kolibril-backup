@@ -30,13 +30,13 @@ class Scene1_amplitude(ThreeDScene):  # with real plane on the right
 
         real_out = Realspace(pixel_len=pixels)
         img_real = k_math.get_real_out()
-        real_out.fill_real_space(pixels**2*abs(img_real)) ## why??? something with norm
+        real_out.fill_real_space(pixels**2*img_real) ## why??? something with norm
         real_out.scale(9 / pixels * k_plane_size * 0.3).to_edge(UR)
         return k_disp,real_out
 
     def construct(self):
         Order= [("LEFT",3),("LEFT",1),("UP",1),("UP",3),("DIAG",2),("UP",0)]
-        Order= [("LEFT",3)]
+        Order= [("LEFT",3),("LEFT",1)]
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
         self.camera.frame_center.shift(2 * OUT)
         #yess
@@ -67,6 +67,7 @@ class Scene1_amplitude(ThreeDScene):  # with real plane on the right
                 )
                 return comp_updater
             self.play(Compact_updater(),val_tracker.set_value, tick_end_amp, rate_func=linear, run_time=1)
+            # self.play(val_tracker.increment_value(),tick_end_amp,Compact_updater())
             self.wait(2)
             ## blog2
             tick_next_amp = 0
@@ -85,6 +86,6 @@ class Scene1_amplitude(ThreeDScene):  # with real plane on the right
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim    -p -l     -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim    -p -l      -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)
