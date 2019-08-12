@@ -1,25 +1,30 @@
-from manimlib.imports import *
+import cProfile, pstats, io
+from pstats import SortKey
+pr = cProfile.Profile()
+pr.enable()
 
-class elii(Scene):
-    def construct(self):
-        dot = VGroup(
-            Ellipse(height=0.7),
-            Ellipse(height=0.7).rotate(PI / 3),
-            Ellipse(height=0.7).rotate(2 * PI / 3)
-        )
-        self.add(dot)
-        dot2= VGroup(
-            Ellipse(height=0.2),
-            Ellipse(height=0.2).rotate(PI / 3),
-            Ellipse(height=0.2).rotate(2 * PI / 3)
-        )
-        dot2.shift(DOWN*3)
-        self.wait(2)
-        self.add(dot2)
+def func1():
+	for i in range(0,500):
+		print("hello1")
+def func2():
+	for i in range(0,50000):
+		print("hello2")
+def func3():
+	for i in range(0,500000):
+		print("hello3")
 
-    
-if __name__ == "__main__":
-    module_name = os.path.basename(__file__)
-    command_A = "manim   -s -c '#2B2B2B' --video_dir ~/Downloads/  "
-    command_B = module_name +" " +"elii"
-    os.system(command_A + command_B)
+
+func1()
+func1()
+func1()
+func2()
+func1()
+func3()
+func1()
+
+pr.disable()
+s = io.StringIO()
+sortby = SortKey.CUMULATIVE
+ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+ps.print_stats()
+print(s.getvalue())
