@@ -74,7 +74,8 @@ class KSpace(VMobject):
 
     def set_phase_flowers_updater(self,img_kamp, img_kph):
         self.new_flows= VGroup()
-        t_objects = [t for t in self.term.submobjects]
+        t_objects = [t for t in self.dots.submobjects]
+        # print(len(t_objects))
         img_kamp = img_kamp.flatten()
         img_kph = img_kph.flatten()
         # create dots array
@@ -82,9 +83,10 @@ class KSpace(VMobject):
             if img_kph[i] is not 0:  # do not call FLOWER when phase is even 0
                 wanted_heightx = img_kamp[i] / 255 * self.mushroom_heigt
                 # set height
-                # dot = FLOWER(img_kph[i]).scale(0.21)
-                flo = FLOWER(img_kph[i]).scale(0.51)  # for special cases
+                flo = FLOWER(img_kph[i]).scale(0.31)  # when a lot of flowers ar in the game
+                # flo = FLOWER(img_kph[i]).scale(0.51)  # for minimal example
                 flo.move_to(el.get_center() + OUT * wanted_heightx)
+                # probability.next_to(rect.get_top(), DOWN)
                 flo.set_shade_in_3d(True)
                 # append the pixels
                 self.new_flows.add(flo)

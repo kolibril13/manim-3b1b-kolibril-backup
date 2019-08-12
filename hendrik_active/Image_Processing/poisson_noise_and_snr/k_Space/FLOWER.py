@@ -26,7 +26,7 @@ class FLOWER(VMobject):
                 Ellipse(height=0.7).rotate(2 * PI / 3)
             ).set_style(fill_opacity=1, fill_color=self.color1, stroke_width=0).rotate(PI / 6) #green
             knosp.scale(self.scale_fac)
-            knosp.shift(OUT*0.01)
+            knosp.shift(OUT*2)
             self.add(knosp)
 
         # blossom_grow
@@ -49,8 +49,8 @@ class FLOWER(VMobject):
                 Ellipse(height=0.7).rotate(2 * PI / 3)
             ).set_style(fill_opacity=1, fill_color=bloss_col, stroke_width=0).scale(self.scale_fac*0.9)
             nekta = Dot(fill_color=YELLOW).scale(self.scale_fac*2)
-            bloss.shift(OUT * 0.02)#
-            nekta.shift(OUT * 0.03)
+            bloss.shift(OUT * 3)#
+            nekta.shift(OUT * 4)
             # bloss.shift(OUT * 0.2)#
             # nekta.shift(OUT * 0.4)
             #bloss.set_shade_in_3d(True)
