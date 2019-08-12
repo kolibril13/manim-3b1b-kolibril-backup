@@ -137,7 +137,7 @@ class KSpace(VMobject):
                                   u_max=self.get_corner(UL)[1])
         magic_gauss.set_style(stroke_color=BLUE_A)
         magic_gauss.set_fill_by_checkerboard(GREEN,BLUE,opacity=0.1)
-        return magic_gauss
+        self.add(magic_gauss)
 
     def gauss_array_2d(self,sigma=1 , mu=0):
         x, y = np.meshgrid(np.linspace(-1, 1, self.pixel_len), np.linspace(-1, 1, self.pixel_len))

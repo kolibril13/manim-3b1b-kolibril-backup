@@ -70,6 +70,8 @@ class FourierMathJuggling:
                           140, 93, 236, 255, 255, 255],
                          [255, 255, 255, 216, 174, 248, 255, 255, 255, 255, 255, 255, 254,
                           249, 175, 215, 255, 255, 255]])
+        star = np.uint8([[1, 1, 1], [2, 2, 2], [1, 1, 1]])
+        star = np.uint8(star * (255 / 3))
         img_array= star
         ##even make forier transform yet:
         f = np.fft.fft2(img_array)
