@@ -1,22 +1,33 @@
 from manimlib.imports import *
 
-class Example(Scene):
+class MyDotGrid(VMobject):
+    def __init__(self):
+        VMobject.__init__(self)
+        col = [GREEN, BLUE]
+        colors = color_gradient(col, 20)
+        dots=[Dot(fill_color=co).shift(LEFT*0.5*i) for i,co in enumerate(colors) ]
+        self.dotgrid= VGroup(*dots)
+        self.dotgrid.move_to(ORIGIN)
+        self.add(self.dotgrid)
+
+    def update_dot(self,val):
+        self.dotgrid.become(self.dotgrid.move_to(UP*0.01*val))
+
+class Example_Scene(Scene):
     def construct(self):
-        scale_fac=10
-        dot = Dot()
-        dot2=Dot().move_to(LEFT)
-        line = Line(dot.get_center(),dot2.get_center())
-        line.set_stroke(width=2)
-        a=VGroup(dot,dot2,line)
-        b=a.copy()
-        b.scale(scale_factor=scale_fac)
-        b.set_stroke(width=2*scale_fac)
-        b.shift(DOWN)
-        self.add(a,b)
+        dot = MyDotGrid()
+        self.add(dot)
+        self.wait(1)
+        tr=ValueTracker(0)
+        def updater(mob):
+            mob.update_dot(tr.get_value())
+            return mob
+
+        self.play(tr.increment_value,90, UpdateFromFunc(dot,updater))
 
     
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim -p -s    -c '#2B2B2B' --video_dir ~/Downloads/  "
-    command_B = module_name +" " +"lalll"
+    command_A = "manim -p -c '#2B2B2B' --video_dir ~/Downloads/  "
+    command_B = module_name +" " +"Example_Scene"
     os.system(command_A + command_B)

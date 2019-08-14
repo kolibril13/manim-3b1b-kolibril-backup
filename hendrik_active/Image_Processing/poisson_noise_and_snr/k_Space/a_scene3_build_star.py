@@ -13,13 +13,12 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
         self.camera.frame_center.shift(2 * OUT)
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
 
-        pixels = 3  # this is how it shoud be
-
-        k_math = FourierMathJuggling(None,pixels=3)
+        k_math = FourierMathJuggling()
         k_math.k_from_real_in_from_star()
+        pixels = k_math.get_pixels()
         k_disp = KSpace(pixel_len=pixels)
         img_kamp, img_kph = k_math.get_amp_and_ph()
-        # img_kamp =(img_kamp/img_kamp.max())*10000 #for 19x19 star
+        img_kamp =(img_kamp/img_kamp.max())*10000 #for 19x19 star
         img_kamp= img_kamp
         k_disp.fill_k_space_updater(img_kamp)
         k_disp.set_phase_flowers_updater(img_kamp, img_kph)
@@ -38,7 +37,6 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
         real_in.scale(9 / pixels * k_plane_size * 0.3).to_edge(UL)
         real_text_in = TextMobject("Input").scale(0.75).next_to(real_in, DOWN)
         self.add_fixed_in_frame_mobjects(real_in, real_text_in)
-        print(img_in_real)
         self.wait(2)
 
         # ##HERE STARTS THE LOOP:
@@ -65,6 +63,6 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim   -s   -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim   -s -p -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)

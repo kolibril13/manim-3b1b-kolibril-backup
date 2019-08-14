@@ -1,34 +1,36 @@
 from PIL import Image
 import numpy as np ##here???
 
-
-class FourierMathJuggling:
-    def __init__(self, img_k_space, pixels):
+class FourierMathJuggling(object):
+    def __init__(self, img_k_space=None):
         """
         This will create a k_space object with amplitude, phase and the option of an inverse transformation
         """
-        print("ehhhddd")
-        self.pixels = pixels
         self.img_k_space = img_k_space
-        if self.img_k_space is not None:
-            self.img_k_space_original=self.img_k_space.copy()
-        self.img_realin= None # preset : no real input image
+        if self.img_k_space is None:
+            self.img_k_space = np.array([[1, 1, 2], [2, 2, 2], [2, 1, 1]])#minimal dummy
+            print("yes")
+        self.img_k_space_original = self.img_k_space.copy()
+        self.pixels = len(self.img_k_space)
+        self.img_real_in= None # preset : no real input image
 
     ############ MAKE INPUT  ########
-    def k_from_real_in(self):  # init  ## set the input
+    def k_from_real_in(self,name="bw_banane.png", small_section:bool=False):  # init  ## set the input
         path = '/home/jan-hendrik/python/projects/tricks_for_python/jupyter/coffe_lecture/'
-        name = "bw_banane.png"
         img = Image.open(path + name)  ##open
         img_array = np.asarray(img)  # konv PIL Format in numpy format
-        img_array = img_array[::4,::4]
-        img_array= img_array[50:80,100:130]
+        if small_section == True:
+            img_array = img_array[::4,::4]
+            img_array= img_array[50:80,100:130]
         ##even make forier transform yet:
         f = np.fft.fft2(img_array)
         fshift = np.fft.fftshift(f)
+
         ## setup for the whole class
         self.img_k_space = fshift
-        self.img_realin = img_array
+        self.img_real_in = img_array
         self.img_k_space_original=self.img_k_space.copy()
+        self.pixels = len(self.img_k_space) #important, because init does not do that -.-
 
 
     def k_from_real_in_from_star(self):  # init  ## set the input
@@ -70,15 +72,17 @@ class FourierMathJuggling:
                           140, 93, 236, 255, 255, 255],
                          [255, 255, 255, 216, 174, 248, 255, 255, 255, 255, 255, 255, 254,
                           249, 175, 215, 255, 255, 255]])
-        star = np.uint8([[1, 1, 1], [2, 2, 2], [1, 1, 1]])
-        star = np.uint8(star * (255 / 3))
         img_array= star
         ##even make forier transform yet:
         f = np.fft.fft2(img_array)
         fshift = np.fft.fftshift(f)
+
         ## setup for the whole class
         self.img_k_space = fshift
-        self.img_realin = img_array
+        self.img_real_in = img_array
+        self.img_k_space_original=self.img_k_space.copy()
+        self.pixels = len(self.img_k_space) #important, because init does not do that -.-
+        print("yes2")
 
     # make some presets for the k_space (no real in)
     @staticmethod  # init
@@ -87,7 +91,7 @@ class FourierMathJuggling:
         phi_rad = np.random.uniform(0, 2 * np.pi, raster_size)
         img_k_space_amp = np.random.uniform(0,255,raster_size)
         img_k_space = img_k_space_amp * np.exp(1j * phi_rad)
-        return FourierMathJuggling(img_k_space, pixels)
+        return FourierMathJuggling(img_k_space)
 
     @staticmethod
     def pixel_position(raster_size, preset_position, center_dist=1):
@@ -115,25 +119,27 @@ class FourierMathJuggling:
         # else:
         #     img_k_space[loc] = amplitude # but not for the center
 
-        return FourierMathJuggling(img_k_space, pixels)
+        return FourierMathJuggling(img_k_space)
 
     ############ MAKE MAGIC  ########
-
     def phase_shift_single(self, angle_deg, preset_position="LEFT",center_dist=1):
         pixels = self.pixels
         raster_size = (pixels, pixels)
         loc = FourierMathJuggling.pixel_position(raster_size, preset_position, center_dist)
         self.img_k_space[loc] = self.img_k_space_original[loc]* np.exp(1j * np.deg2rad(angle_deg))
+
     def phase_shift_all(self,angle_deg):
         self.img_k_space =self.img_k_space_original* np.exp(1j * np.deg2rad(angle_deg))
 
     def apply_transformations(self):
         pass
 
-    # def modulate_amplitude(self,x): #makes no sence
-    #     self.img_k_space= x*self.img_k_space
-
     ############ GET OUTPUT  ########
+    def get_pixels(self):
+        return self.pixels
+
+    def get_amp_k_only(self):
+        return np.abs(self.img_k_space)
 
     def get_amp_and_ph(self):
         img_kamp = np.abs(self.img_k_space)
@@ -147,11 +153,10 @@ class FourierMathJuggling:
         return img_kamp, img_kph
 
     def get_real_in(self):  ## get the input
-        if  self.img_realin is not None:
-            return self.img_realin
+        if  self.img_real_in is not None:
+            return self.img_real_in
         else:
-            print("No Realspace Input")
-            return None
+            raise Exception('There is no input image actually, sorry!')
 
     def get_real_out(self):
         # calculate realspace
@@ -163,3 +168,9 @@ class FourierMathJuggling:
 
     def __str__(self):
         return f"The image of the k space looks like this \n {self.img_k_space}"
+
+if __name__ == "__main__":
+    k_math=FourierMathJuggling()
+    k_math.k_from_real_in(small_section=True)
+    print(k_math.get_pixels())
+    #k_math.get_real_in()
