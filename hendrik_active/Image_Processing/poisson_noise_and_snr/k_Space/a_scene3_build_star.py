@@ -12,20 +12,22 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
         self.add(Image_coordinate_system())
         self.camera.frame_center.shift(2 * OUT)
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
-        xxx=Comp_axis(height=3).set_shade_in_3d()
-        xxx.set_opacity(0.1)
-        self.add(xxx)
+
         k_math = FourierMathJuggling()
         #k_math.k_from_real_in_from_3x3()
         k_math.k_from_real_in_from_star()
         pixels = k_math.get_pixels()
         k_disp = KSpace(pixel_len=pixels)
         img_kamp, img_kph = k_math.get_amp_and_ph()
-        k_disp.fill_k_space_updater(img_kamp,new_amp_max=True,logview=False,
-                                    overshoot_factor=30,mushroom_heigth=1)
-        k_disp.set_phase_flowers_updater(img_kph)
+        k_disp.fill_k_space_updater(img_kamp,new_amp_max= True,logview=False,
+                                    overshoot_factor=20,mushroom_heigth=1) #init wit new_amp_max ture
         k_disp.set_shade_in_3d(True)
         self.add(k_disp)
+
+        compare_Axis = Comp_axis(height=3).set_shade_in_3d()
+        compare_Axis.set_opacity(0.1)
+        self.add(compare_Axis)
+
         real_out = Realspace(pixel_len=pixels)
         img_real = k_math.get_real_out()
         real_out.fill_real_space( img_real)
@@ -33,38 +35,36 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
         real_text = TextMobject("Real-Space").scale(0.75).next_to(real_out, DOWN)
         self.add_fixed_in_frame_mobjects(real_out, real_text)
 
-        # real_in = Realspace(pixel_len=pixels)
-        # img_in_real = k_math.get_real_in()
-        # real_in.fill_real_space(img_in_real)
-        # real_in.scale(9 / pixels * k_plane_size * 0.3).to_edge(UL)
-        # real_text_in = TextMobject("Input").scale(0.75).next_to(real_in, DOWN)
-        # self.add_fixed_in_frame_mobjects(real_in, real_text_in)
-        self.wait(2)
+        real_in = Realspace(pixel_len=pixels)
+        img_in_real = k_math.get_real_in()
+        real_in.fill_real_space(img_in_real)
+        real_in.scale(9 / pixels * k_plane_size * 0.3).to_edge(UL)
+        real_text_in = TextMobject("Input").scale(0.75).next_to(real_in, DOWN)
+        self.add_fixed_in_frame_mobjects(real_in, real_text_in)
+#        self.wait(2)
 
         # ##HERE STARTS THE LOOP:
         # ####change the phase
-        # postion_setting = {"preset_position": "LEFT", "center_dist":2}
-        # def update_phase(mob):
-        #     val= my_phase_tracker.get_value()
-        #     k_math.phase_shift_single(val, **postion_setting)
-        #     img_kamp, img_kph=k_math.get_amp_and_ph()
-        #     mob.set_phase_flowers_updater (img_kamp, img_kph)
-        #     mob.set_shade_in_3d(True)
-        #     img_real = k_math.get_real_out()
-        #     real_out.fill_real_space(pixels ** 2 * img_real)
-        #     return mob
-        # my_phase_tracker = ValueTracker(0)
-        # for i in range(0,4):
-        #     self.play(my_phase_tracker.increment_value, 90,
-        #               UpdateFromFunc(k_disp, update_phase),
-        #               rate_func=linear)
-        #     print("ye")
-        #     self.wait(1)
-        # self.wait(2)
+        def amp_grower(mob):
+            val= queenstracker.get_value()
+            k_math.apply_transformations(val)
+            img_kamp, img_kph =k_math.get_amp_and_ph()
+            k_disp.fill_k_space_updater(img_kamp)
+            mob.set_shade_in_3d(True)
+            img_real = k_math.get_real_out()
+            real_out.fill_real_space(img_real)
+            return mob
+        queenstracker = ValueTracker(0)
+        end_val=1
+        self.play(queenstracker.increment_value, end_val,
+                  UpdateFromFunc(k_disp, amp_grower),
+                  rate_func=linear,run_time=1 )
+        print("ye")
+        self.wait(1)
 
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim   -s   -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim  -p -l  -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)

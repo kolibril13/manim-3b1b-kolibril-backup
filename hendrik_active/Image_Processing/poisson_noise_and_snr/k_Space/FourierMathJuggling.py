@@ -84,7 +84,6 @@ class FourierMathJuggling(object):
         self.img_real_in = img_array
         self.img_k_space_original=self.img_k_space.copy()
         self.pixels = len(self.img_k_space) #important, because init does not do that -.-
-        print("yes2")
 
 
     def k_from_real_in_from_3x3(self):  # init  ## set the input
@@ -101,7 +100,6 @@ class FourierMathJuggling(object):
         self.img_real_in = img_array
         self.img_k_space_original=self.img_k_space.copy()
         self.pixels = len(self.img_k_space) #important, because init does not do that -.-
-        print("yes2")
 
     # make some presets for the k_space (no real in)
     @staticmethod  # init
@@ -150,8 +148,8 @@ class FourierMathJuggling(object):
     def phase_shift_all(self,angle_deg):
         self.img_k_space =self.img_k_space_original* np.exp(1j * np.deg2rad(angle_deg))
 
-    def apply_transformations(self):
-        pass
+    def apply_transformations(self,factor):
+        self.img_k_space=self.img_k_space_original*factor
 
     ############ GET OUTPUT  ########
     def get_pixels(self):
