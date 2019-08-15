@@ -40,18 +40,30 @@ class KSpace(VMobject):
         ORI_POINT.set_z(0.0001)
         self.add(ORI_POINT)
 
-    def fill_k_space_updater(self, img_kamp): #empty it first, then refill
+    def fill_k_space_updater(self, img_kamp, new_amp_max:bool=False,logview:bool=False, overshoot_factor=None, mushroom_heigth:float=1):
+        '''
+        :param img_kamp: must be the k_space amplitude, no modifications yet
+        :param new_amp_max: the scaling factor for the max: should be true for initail call
+        '''
         t_objects = [t for t in self.term.submobjects]
+
         img_kamp = img_kamp.flatten()
+        if logview == True:
+            img_kamp = np.log2(img_kamp)
+        if new_amp_max == True:
+            self.amp_max=img_kamp.max()
+        img_kamp= img_kamp/self.amp_max
+        if overshoot_factor is not None:
+            img_kamp= img_kamp*overshoot_factor
         # create dots array
         self.dots = VGroup()
         self.lines = VGroup()
         for i, el in enumerate(t_objects):
             # interpol_col
-            wanted_color = interpolate_color(BLACK, WHITE, img_kamp[i] / 255)
+            wanted_color = interpolate_color(BLACK, WHITE, img_kamp[i])
             el.set_color(wanted_color)
 
-            wanted_height = img_kamp[i] / 255 * self.mushroom_heigt
+            wanted_height = img_kamp[i]*mushroom_heigth
             if wanted_height != 0:
                 # set height
                 dot = Dot()
@@ -72,7 +84,7 @@ class KSpace(VMobject):
         self.lines_and_dots.become(self.new_lines_and_dots)
 
 
-    def set_phase_flowers_updater(self,img_kamp, img_kph):
+    def set_phase_flowers_updater(self, img_kph):
         self.new_flows= VGroup()
         t_objects = [t for t in self.dots.submobjects]
         img_kph = img_kph.flatten()

@@ -8,7 +8,9 @@ class FourierMathJuggling(object):
         """
         self.img_k_space = img_k_space
         if self.img_k_space is None:
-            self.img_k_space = np.array([[1, 1, 2], [2, 2, 2], [2, 1, 1]])#minimal dummy
+            self.img_k_space = np.array([[1, 1, 2],
+                                         [2, 2, 2],
+                                         [2, 1, 1]])#minimal dummy
             print("yes")
         self.img_k_space_original = self.img_k_space.copy()
         self.pixels = len(self.img_k_space)
@@ -72,6 +74,23 @@ class FourierMathJuggling(object):
                           140, 93, 236, 255, 255, 255],
                          [255, 255, 255, 216, 174, 248, 255, 255, 255, 255, 255, 255, 254,
                           249, 175, 215, 255, 255, 255]])
+        img_array= star
+        ##even make forier transform yet:
+        f = np.fft.fft2(img_array)
+        fshift = np.fft.fftshift(f)
+
+        ## setup for the whole class
+        self.img_k_space = fshift
+        self.img_real_in = img_array
+        self.img_k_space_original=self.img_k_space.copy()
+        self.pixels = len(self.img_k_space) #important, because init does not do that -.-
+        print("yes2")
+
+
+    def k_from_real_in_from_3x3(self):  # init  ## set the input
+        star = np.uint8([[216, 174, 248],
+                         [0,10,100],
+                         [255, 255, 255]])
         img_array= star
         ##even make forier transform yet:
         f = np.fft.fft2(img_array)

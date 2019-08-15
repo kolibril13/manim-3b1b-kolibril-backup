@@ -13,3 +13,13 @@ class Image_coordinate_system(VMobject):
         self.add(k_text)
         self.add(UP_arrow)
 
+class Comp_axis(VMobject):
+    def __init__(self,height):
+        VMobject.__init__(self)
+        ax = Rectangle(height=height, width=1,fill_color=GREEN)
+        axt = TextMobject(f"{height}").next_to(ax, UP)
+        axis = VGroup(ax, axt)
+
+        axis.rotate(-PI / 2, axis=LEFT)
+        axis.next_to(ORIGIN, OUT,buff=0)
+        self.add(axis)
