@@ -1,5 +1,5 @@
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.ImProImports import \
-    FourierMathJuggling,Image_coordinate_system, KSpace, Realspace
+from hendrik_active.Image_Processing.FourierIdea.ImProImports import \
+    FourierMathJuggling, KSpace, Realspace
 from manimlib.imports import *
 
 global k_plane_size

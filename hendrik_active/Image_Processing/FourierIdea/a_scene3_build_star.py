@@ -1,4 +1,4 @@
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.ImProImports import \
+from hendrik_active.Image_Processing.FourierIdea.ImProImports import \
     FourierMathJuggling,Image_coordinate_system, KSpace, Realspace,Comp_axis
 from manimlib.imports import *
 
@@ -61,14 +61,13 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
                   rate_func=linear,run_time=4 )
         print("ye")
         self.wait(1)
-        k_disp.set_phase_
-        flowers_updater(img_kph)
+        k_disp.set_phase_flowers_updater(img_kph)
         self.wait(1)
 
 
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim  -p  -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim  -p -s  -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)

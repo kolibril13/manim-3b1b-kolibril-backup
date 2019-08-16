@@ -1,4 +1,4 @@
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.ImProImports import \
+from hendrik_active.Image_Processing.FourierIdea.ImProImports import \
     FourierMathJuggling,Image_coordinate_system, KSpace, Realspace
 from manimlib.imports import *
 

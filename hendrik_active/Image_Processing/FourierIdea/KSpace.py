@@ -1,5 +1,5 @@
 from manimlib.imports import *
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FLOWER import FLOWER
+from hendrik_active.Image_Processing.FourierIdea.FLOWER import FLOWER
 
 global k_plane_size
 k_plane_size=0.7

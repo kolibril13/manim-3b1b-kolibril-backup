@@ -1,7 +1,8 @@
 from manimlib.imports import *
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.KSpace import *
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.FourierMathJuggling import FourierMathJuggling
-from hendrik_active.Image_Processing.poisson_noise_and_snr.k_Space.Realspace import Realspace
+from hendrik_active.Image_Processing.FourierIdea.KSpace import *
+from hendrik_active.Image_Processing.FourierIdea.Realspace import *
+from hendrik_active.Image_Processing.FourierIdea.FourierMathJuggling import *
+
 
 class Image_coordinate_system(VMobject):
     def __init__(self):
