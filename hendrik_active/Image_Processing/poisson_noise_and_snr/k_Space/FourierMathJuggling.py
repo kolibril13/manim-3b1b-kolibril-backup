@@ -109,6 +109,9 @@ class FourierMathJuggling(object):
         img_k_space_amp = np.random.uniform(0,255,raster_size)
         img_k_space = img_k_space_amp * np.exp(1j * phi_rad)
         return FourierMathJuggling(img_k_space)
+        # t = FourierMathJuggling(img_k_space) #nice idea!
+        # t.pixels = pixels
+        # return t
 
     @staticmethod
     def pixel_position(raster_size, preset_position, center_dist=1):

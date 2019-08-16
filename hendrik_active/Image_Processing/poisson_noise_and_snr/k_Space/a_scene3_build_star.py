@@ -49,7 +49,7 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
             val= queenstracker.get_value()
             k_math.apply_transformations(val)
             img_kamp, img_kph =k_math.get_amp_and_ph()
-            k_disp.fill_k_space_updater(img_kamp)
+            k_disp.fill_k_space_updater(img_kamp,overshoot_factor =20)
             mob.set_shade_in_3d(True)
             img_real = k_math.get_real_out()
             real_out.fill_real_space(img_real)
@@ -58,13 +58,17 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
         end_val=1
         self.play(queenstracker.increment_value, end_val,
                   UpdateFromFunc(k_disp, amp_grower),
-                  rate_func=linear,run_time=1 )
+                  rate_func=linear,run_time=4 )
         print("ye")
         self.wait(1)
+        k_disp.set_phase_
+        flowers_updater(img_kph)
+        self.wait(1)
+
 
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim  -p -l  -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim  -p  -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)
