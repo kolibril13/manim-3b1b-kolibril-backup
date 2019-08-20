@@ -43,11 +43,15 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
         self.add_fixed_in_frame_mobjects(real_in, real_text_in)
 #        self.wait(2)
 
+        Order = [("LEFT", 1), ("UP", 3), ("UP", 1), ("UP", -1), ("DIAG", 2), ("DIAG", 1), ("UP", 0)]
+        k_math.setup_order(Order)
+
         # ##HERE STARTS THE LOOP:
         # ####change the phase
         def amp_grower(mob):
             val= queenstracker.get_value()
-            k_math.apply_transformations(val)
+            #k_math.apply_transformations(val)
+            k_math.apply_mask(val)
             img_kamp, img_kph =k_math.get_amp_and_ph()
             k_disp.fill_k_space_updater(img_kamp,overshoot_factor =20)
             mob.set_shade_in_3d(True)
@@ -55,19 +59,17 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
             real_out.fill_real_space(img_real)
             return mob
         queenstracker = ValueTracker(0)
-        end_val=1
+        end_val=1.3
         self.play(queenstracker.increment_value, end_val,
                   UpdateFromFunc(k_disp, amp_grower),
-                  rate_func=linear,run_time=4 )
+                  rate_func=linear,run_time=12)
         print("ye")
-        self.wait(1)
-        k_disp.set_phase_flowers_updater(img_kph)
         self.wait(1)
 
 
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim  -p -s  -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim  -p   -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)
