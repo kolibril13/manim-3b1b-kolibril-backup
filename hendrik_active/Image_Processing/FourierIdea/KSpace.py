@@ -7,15 +7,12 @@ k_plane_size=0.7
 class KSpace(VMobject):
     CONFIG = {
         "pixel_len":23,
-        "mushroom_heigt":1.1,
+        "mushroom_heigt":3,
         "magic_offset_z":k_plane_size
     }
     def __init__(self , **kwargs):
         digest_config(self, kwargs)
         VMobject.__init__(self, **kwargs)
-        self.term= VGroup()
-        self.flows = VGroup()  ## these will be deleted and filled in subfunctions
-        self.lines_and_dots=VGroup() ## these will be deleted and filled in subfunctions
         PIXELS = self.pixel_len * self.pixel_len
         square_ALL = [Square(fill_opacity=1, side_length=1) for i in range(0, PIXELS)]
         j = 0
@@ -24,21 +21,22 @@ class KSpace(VMobject):
                 j += 1
             k = i - j * self.pixel_len
             square_to_move.move_to((LEFT * k + j * DOWN))
+        self.term= VGroup()
+        self.flows= VGroup()
+        self.lines_and_dots= VGroup()
+        self.magic_plane= VGroup()
         self.term.add(*square_ALL)
         self.term.set_x(0)
         self.term.set_y(0)
         self.term.set_z(0.00001)  ## Important, because otherwise dots are visible ...
         self.term.scale_about_point(9 / self.pixel_len * k_plane_size, ORIGIN)
         # self.term.set_shade_in_3d(True)
-        self.add(self.term) ## better return term???
-        self.add(self.flows)
-        self.add(self.lines_and_dots)
-        # lastly the middle point
-        # ORI_POINT = Dot(fill_color=ORANGE).shift(OUT * 0.1).scale(1.5)
+        self.add(self.term, self.flows,self.lines_and_dots, self.magic_plane)
         # ORI_POINT.set_shade_in_3d(True)
         ORI_POINT = Dot(fill_color=ORANGE).scale(1.5)
         ORI_POINT.set_z(0.0001)
         self.add(ORI_POINT)
+
 
     def fill_k_space_updater(self, img_kamp, new_amp_max:bool=False,logview:bool=False, overshoot_factor=None, mushroom_heigth:float=1):
         '''
@@ -128,31 +126,41 @@ class KSpace(VMobject):
                                         u_max=self.get_corner(UL)[1])
         magic_plane.set_style(stroke_color=BLUE_A)
         magic_plane.set_fill_by_checkerboard(GREEN, BLUE, opacity=0.1)
-        return magic_plane
+        self.magic_plane.become(magic_plane)
 
-    def set_magic_gauss(self,**kwargs):
+
+
+    def set_magic_gauss(self,step:float, sigma:float,mode:str,**kwargs):
         resolution_fa = self.pixel_len
-        def param_gauss(u,v):
+        def param_gauss_low(u,v):
             x=u
             y=v
             d = np.sqrt(x * x + y * y)
-            sigma, mu = 1, 0.0
-            z= (1-np.exp(-((d - mu) ** 2 / (2.0 * sigma ** 2))))*self.mushroom_heigt+self.magic_offset_z
+            mu = 0.0
+            z= (1-(1-np.exp(-( (d-mu)**2 / ( 2.0 * sigma**2 ) ) ))*step) *self.mushroom_heigt #+self.magic_offset_z
+            return np.array([x,y,z])
+
+        def param_gauss_high(u,v):
+            x=u
+            y=v
+            d = np.sqrt(x * x + y * y)
+            mu = 0.0
+            z= (1-np.exp(-( (d-mu)**2 / ( 2.0 * sigma**2 ) ) )*step) *self.mushroom_heigt #+self.magic_offset_z
             return np.array([x,y,z])
 
 
 
-        magic_gauss= ParametricSurface((param_gauss),resolution=(resolution_fa, resolution_fa),
+        if mode == "lowpass":
+            plane_func= param_gauss_low
+        if mode == "highpass":
+            plane_func= param_gauss_high
+        magic_gauss= ParametricSurface((plane_func),resolution=(resolution_fa, resolution_fa),
                                   v_min=self.get_corner(UL)[0],
                                   v_max=self.get_corner(UL)[1],
                                   u_min=self.get_corner(UL)[0],
                                   u_max=self.get_corner(UL)[1])
         magic_gauss.set_style(stroke_color=BLUE_A)
+        magic_gauss.next_to([0,0,3],IN,buff=0)
         magic_gauss.set_fill_by_checkerboard(GREEN,BLUE,opacity=0.1)
-        self.add(magic_gauss)
+        self.magic_plane.become(magic_gauss)
 
-    def gauss_array_2d(self,sigma=1 , mu=0):
-        x, y = np.meshgrid(np.linspace(-1, 1, self.pixel_len), np.linspace(-1, 1, self.pixel_len))
-        d = np.sqrt(x * x + y * y)
-        g = np.exp(-((d - mu) ** 2 / (2.0 * sigma ** 2)))
-        return g
