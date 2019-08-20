@@ -11,13 +11,13 @@ class RealImage(ThreeDScene):  # with real plane on the right
     CONFIG={
         "down_sample_factor":24, # cool!
         # "down_sample_factor": 50,
-        "log10view":False
+        "log10view":True
     }
     def construct(self):
         self.add(Image_coordinate_system())
         self.camera.frame_center.shift(2 * OUT)
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
-        #self.set_camera_orientation(phi=40 * DEGREES, theta=-60 * DEGREES) #TODO
+        #self.set_camera_orientation(phi=40 * DEGREES, theta=-60 * DEGREES) #TODO NO!
         k_math = FourierMathJuggling()
         k_math.k_from_real_in_old_woman() # has a 600x600 resolution
 
@@ -56,7 +56,7 @@ class RealImage(ThreeDScene):  # with real plane on the right
             val= queenstracker.get_value()
             #k_math.apply_transformations(val,sigma=0.05,mode="lowpass")
             #k_disp.set_magic_gauss(val,sigma=0.9, mode="lowpass")
-            k_math.apply_transformations(val,sigma=0.3,mode="highpass")
+            k_math.apply_transformations(val,sigma=0.9,mode="highpass")
             k_disp.set_magic_gauss(val,sigma=0.9, mode="highpass")
             img_kamp, img_kph =k_math.get_amp_and_ph_DOWNSAMPLED(self.down_sample_factor)
             k_disp.fill_k_space_updater(img_kamp)
