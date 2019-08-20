@@ -43,7 +43,7 @@ class Scene3_build_star(ThreeDScene):  # with real plane on the right
         self.add_fixed_in_frame_mobjects(real_in, real_text_in)
 #        self.wait(2)
 
-        Order = [("LEFT", 1), ("UP", 3), ("UP", 1), ("UP", -1), ("DIAG", 2), ("DIAG", 1), ("UP", 0)]
+        Order = [ ("UP", 0),("LEFT", 1), ("UP", 3), ("UP", 1), ("UP", -1), ("DIAG", 2), ("DIAG", 1)]
         k_math.setup_order(Order)
 
         # ##HERE STARTS THE LOOP:
