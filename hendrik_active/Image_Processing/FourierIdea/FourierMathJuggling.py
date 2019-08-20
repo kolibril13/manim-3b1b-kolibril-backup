@@ -249,10 +249,15 @@ class FourierMathJuggling(object):
         self.img_real_in = None  # preset : no real input image
 
     ############ MAKE INPUT  ########
-    def k_from_real_in(self, name="bw_banane.png", small_section: bool = False):  # init  ## set the input
-        path = '/home/jan-hendrik/python/projects/tricks_for_python/jupyter/coffe_lecture/'
+    def k_from_real_in_old_woman(self):
+        name = "woman2x.png"
+        self.k_from_real_in(name=name)
+    def k_from_real_in(self, name="woman2x.png", small_section: bool = False):  # init  ## set the input
+        path = './pictures/'
         img = Image.open(path + name)  ##open
         img_array = np.asarray(img)  # konv PIL Format in numpy format
+        self.pixels= min(img_array.shape)
+        img_array= img_array[0:self.pixels, 0:self.pixels]
         if small_section == True:
             img_array = img_array[::4, ::4]
             img_array = img_array[50:80, 100:130]
@@ -384,6 +389,8 @@ class FourierMathJuggling(object):
     ############ GET OUTPUT  ########
     def get_pixels(self):
         return self.pixels
+    def get_pixels_DOWNSAMPLED(self):
+        return self.pixels_DOWNSAMPLED
 
     def get_amp_k_only(self):
         return np.abs(self.img_k_space)
@@ -397,6 +404,7 @@ class FourierMathJuggling(object):
         self.img_k_space_downsampled = self.img_k_space[0::sample_fac, 0::sample_fac]
         img_kamp = np.abs(self.img_k_space_downsampled)
         img_kph = (np.angle(self.img_k_space_downsampled, deg=True))
+        self.pixels_DOWNSAMPLED= len(self.img_k_space_downsampled)
         return img_kamp, img_kph
 
     def get_real_in(self):  ## get the input

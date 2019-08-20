@@ -7,11 +7,14 @@ k_plane_size=0.7
 class KSpace(VMobject):
     CONFIG = {
         "pixel_len":23,
-        "mushroom_heigt":3,
+        "mushroom_height":3,
+        "logview":False,
+        "overshoot_factor":1.,
         "magic_offset_z":k_plane_size
     }
     def __init__(self , **kwargs):
         digest_config(self, kwargs)
+        print(self.pixel_len)
         VMobject.__init__(self, **kwargs)
         PIXELS = self.pixel_len * self.pixel_len
         square_ALL = [Square(fill_opacity=1, side_length=1) for i in range(0, PIXELS)]
@@ -37,8 +40,13 @@ class KSpace(VMobject):
         ORI_POINT.set_z(0.0001)
         self.add(ORI_POINT)
 
+    # def fill_k_space_updater_settings(self,logview:bool=False, overshoot_factor=None, mushroom_height:float=1):
+    #     '''Must be called before every fill_k_space_updater'''
+    #     self.logview= logview
+    #     self.overshoot_factor=overshoot_factor
+    #     self.mushroom_height=mushroom_height
 
-    def fill_k_space_updater(self, img_kamp, new_amp_max:bool=False,logview:bool=False, overshoot_factor=None, mushroom_heigth:float=1):
+    def fill_k_space_updater(self, img_kamp, new_amp_max:bool=False):
         '''
         :param img_kamp: must be the k_space amplitude, no modifications yet
         :param new_amp_max: the scaling factor for the max: should be true for initail call
@@ -46,13 +54,15 @@ class KSpace(VMobject):
         t_objects = [t for t in self.term.submobjects]
 
         img_kamp = img_kamp.flatten()
-        if logview == True:
+        if self.logview == True:
             img_kamp = np.log2(img_kamp)
+            img_kamp[img_kamp<0]= 0
+            # img_kamp *= (img_kamp>0) not working
         if new_amp_max == True:
             self.amp_max=img_kamp.max()
         img_kamp= img_kamp/self.amp_max
-        if overshoot_factor is not None:
-            img_kamp= img_kamp*overshoot_factor
+        if self.overshoot_factor is not None:
+            img_kamp= img_kamp*self.overshoot_factor
         # create dots array
         self.dots = VGroup()
         self.lines = VGroup()
@@ -61,7 +71,7 @@ class KSpace(VMobject):
             wanted_color = interpolate_color(BLACK, WHITE, img_kamp[i])
             el.set_color(wanted_color)
 
-            wanted_height = img_kamp[i]*mushroom_heigth
+            wanted_height = img_kamp[i]*self.mushroom_height
             if wanted_height != 0:
                 # set height
                 dot = Dot()
@@ -117,7 +127,7 @@ class KSpace(VMobject):
         def param_plane(u, v):
             x = u
             y = v
-            z = self.mushroom_heigt + self.magic_offset_z
+            z = self.mushroom_height + self.magic_offset_z
             return np.array([x, y, z])
         magic_plane = ParametricSurface((param_plane), resolution=(self.pixel_len, self.pixel_len),
                                         v_min=self.get_corner(UL)[0],
@@ -137,7 +147,7 @@ class KSpace(VMobject):
             y=v
             d = np.sqrt(x * x + y * y)
             mu = 0.0
-            z= (1-(1-np.exp(-( (d-mu)**2 / ( 2.0 * sigma**2 ) ) ))*step) *self.mushroom_heigt #+self.magic_offset_z
+            z= (1-(1-np.exp(-( (d-mu)**2 / ( 2.0 * sigma**2 ) ) ))*step) * self.mushroom_height
             return np.array([x,y,z])
 
         def param_gauss_high(u,v):
@@ -145,7 +155,7 @@ class KSpace(VMobject):
             y=v
             d = np.sqrt(x * x + y * y)
             mu = 0.0
-            z= (1-np.exp(-( (d-mu)**2 / ( 2.0 * sigma**2 ) ) )*step) *self.mushroom_heigt #+self.magic_offset_z
+            z= (1-np.exp(-( (d-mu)**2 / ( 2.0 * sigma**2 ) ) )*step) * self.mushroom_height
             return np.array([x,y,z])
 
 
@@ -159,7 +169,7 @@ class KSpace(VMobject):
                                   v_max=self.get_corner(UL)[1],
                                   u_min=self.get_corner(UL)[0],
                                   u_max=self.get_corner(UL)[1])
-        magic_gauss.set_style(stroke_color=BLUE_A)
+        magic_gauss.set_style(stroke_color=BLUE_A, stroke_opacity=0.3)
         magic_gauss.next_to([0,0,3],IN,buff=0)
         magic_gauss.set_fill_by_checkerboard(GREEN,BLUE,opacity=0.1)
         self.magic_plane.become(magic_gauss)
