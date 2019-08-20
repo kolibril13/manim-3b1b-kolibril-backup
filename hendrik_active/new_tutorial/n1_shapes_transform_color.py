@@ -6,10 +6,9 @@ class Text(Scene):
         "y_min": 0,
         "y_max": 10    }
     def construct(self):
-
         sq= Square()
         self.add(sq)
-        self.play(sq.set_opacity, 1)
+        self.play(sq.set_color, GREEN)
         self.wait()
 
 if __name__ == "__main__":

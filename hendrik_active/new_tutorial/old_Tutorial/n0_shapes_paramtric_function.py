@@ -7,14 +7,15 @@ class ParamFunc(Scene):
 
     def construct(self):
         func=ParametricFunction(self.func, t_max=TAU, fill_opacity=0)
-        dot = Dot()
-        self.add(dot)
-        self.add(func)
-        self.wait(3)
+        print(len(func.points))
+        # dot = Dot()
+        # self.add(dot)
+        # self.add(func.scale(3))
+        # self.wait(3)
 
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command = "manim  -p -s -o earth_sofi  --leave_progress_bars " + module_name + " ParamFunc "
+    command = "manim  -s  " + module_name + " ParamFunc "
     os.system(command)
 
