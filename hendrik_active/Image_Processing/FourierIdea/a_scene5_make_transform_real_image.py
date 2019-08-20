@@ -8,22 +8,26 @@ k_plane_size=0.7
 
 scene = "RealImage"
 class RealImage(ThreeDScene):  # with real plane on the right
-
+    CONFIG={
+        "down_sample_factor":24, # cool!
+        # "down_sample_factor": 50,
+        "log10view":False
+    }
     def construct(self):
         self.add(Image_coordinate_system())
         self.camera.frame_center.shift(2 * OUT)
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
-
+        #self.set_camera_orientation(phi=40 * DEGREES, theta=-60 * DEGREES) #TODO
         k_math = FourierMathJuggling()
         k_math.k_from_real_in_old_woman() # has a 600x600 resolution
 
         pixels = k_math.get_pixels()
-        sample_Factor= 24 #prety cool
         print("yes",pixels)
-        img_kamp, img_kph = k_math.get_amp_and_ph_DOWNSAMPLED(sample_Factor)
+        img_kamp, img_kph = k_math.get_amp_and_ph_DOWNSAMPLED(self.down_sample_factor)
         pixels_DOWNSAMPLED = k_math.get_pixels_DOWNSAMPLED()
         k_disp = KSpace(pixel_len=pixels_DOWNSAMPLED)
         k_disp.overshoot_factor=1
+        k_disp.log10view=self.log10view
         k_disp.fill_k_space_updater(img_kamp,new_amp_max=True) #init wit new_amp_max ture
         k_disp.set_shade_in_3d(True)
         self.add(k_disp)
@@ -50,11 +54,11 @@ class RealImage(ThreeDScene):  # with real plane on the right
         ####change the phase
         def amp_tansformer(mob):
             val= queenstracker.get_value()
-            k_math.apply_transformations(val,sigma=0.05,mode="lowpass")
-            k_disp.set_magic_gauss(val,sigma=0.9, mode="lowpass")
-            #k_math.apply_transformations(val,sigma=0.1,mode="highpass")
-            #k_disp.set_magic_gauss(val,sigma=0.9, mode="highpass")
-            img_kamp, img_kph =k_math.get_amp_and_ph_DOWNSAMPLED(sample_Factor)
+            #k_math.apply_transformations(val,sigma=0.05,mode="lowpass")
+            #k_disp.set_magic_gauss(val,sigma=0.9, mode="lowpass")
+            k_math.apply_transformations(val,sigma=0.3,mode="highpass")
+            k_disp.set_magic_gauss(val,sigma=0.9, mode="highpass")
+            img_kamp, img_kph =k_math.get_amp_and_ph_DOWNSAMPLED(self.down_sample_factor)
             k_disp.fill_k_space_updater(img_kamp)
             print("animating")
             mob.set_shade_in_3d(True)
@@ -73,6 +77,6 @@ class RealImage(ThreeDScene):  # with real plane on the right
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim   -p  -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim   -p -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)

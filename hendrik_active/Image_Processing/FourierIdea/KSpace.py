@@ -8,7 +8,8 @@ class KSpace(VMobject):
     CONFIG = {
         "pixel_len":23,
         "mushroom_height":3,
-        "logview":False,
+        "log2view":False,
+        "log10view":False,
         "overshoot_factor":1.,
         "magic_offset_z":k_plane_size
     }
@@ -54,10 +55,13 @@ class KSpace(VMobject):
         t_objects = [t for t in self.term.submobjects]
 
         img_kamp = img_kamp.flatten()
-        if self.logview == True:
+        if self.log2view == True:
             img_kamp = np.log2(img_kamp)
             img_kamp[img_kamp<0]= 0
             # img_kamp *= (img_kamp>0) not working
+        if self.log10view == True:
+            img_kamp = np.sqrt(np.sqrt(img_kamp))
+            img_kamp[img_kamp<0]= 0
         if new_amp_max == True:
             self.amp_max=img_kamp.max()
         img_kamp= img_kamp/self.amp_max
