@@ -2,7 +2,7 @@ from PIL import Image
 import numpy as np
 
 
-class Hendriks_step_functions:
+class StepFunctions:
     @staticmethod
     def spiral(width, height):
         NORTH, S, W, E = (0, -1), (0, 1), (-1, 0), (1, 0)  # directions
@@ -46,7 +46,7 @@ class Hendriks_step_functions:
         if 1 <= matrix_counter < matix_max_A:
             p1 = total_time + (matrix_counter - 1) * interval_timeA / matix_max_A
             p2 = total_time + (matrix_counter) * interval_timeA / matix_max_A
-            return Hendriks_step_functions.linear_step_func(order_parameter, p1, p2)
+            return StepFunctions.linear_step_func(order_parameter, p1, p2)
         total_time += interval_timeA
 
         interval_timeB = 25
@@ -54,7 +54,7 @@ class Hendriks_step_functions:
         if 4 <= matrix_counter <= matix_max_B:
             p1 = total_time + (matrix_counter - 1) * interval_timeB / matix_max_B
             p2 = total_time + (matrix_counter) * interval_timeB / matix_max_B
-            return Hendriks_step_functions.linear_step_func(order_parameter, p1, p2)
+            return StepFunctions.linear_step_func(order_parameter, p1, p2)
         total_time += interval_timeB
 
         interval_timeC = 25
@@ -62,7 +62,7 @@ class Hendriks_step_functions:
         if 4 <= matrix_counter <= matix_max_C:
             p1 = total_time + (matrix_counter - 1) * interval_timeC / matix_max_C
             p2 = total_time + (matrix_counter) * interval_timeC / matix_max_C
-            return Hendriks_step_functions.linear_step_func(order_parameter, p1, p2)
+            return StepFunctions.linear_step_func(order_parameter, p1, p2)
         total_time += interval_timeC
 
         interval_timeD = 25
@@ -70,7 +70,7 @@ class Hendriks_step_functions:
         if 4 <= matrix_counter <= matix_max_D:
             p1 = total_time + (matrix_counter - 1) * interval_timeD / matix_max_D
             p2 = total_time + (matrix_counter) * interval_timeD / matix_max_D
-            return Hendriks_step_functions.linear_step_func(order_parameter, p1, p2)
+            return StepFunctions.linear_step_func(order_parameter, p1, p2)
         total_time += interval_timeD
 
 
@@ -208,16 +208,17 @@ class FourierMathJuggling(object):
             return (pixely // 2 - center_dist, pixelx // 2 + center_dist)
 
     @staticmethod  # init
-    def k_from_preset_minimal(pixels=7, preset_position="LEFT", center_dist=1, amplitude=255):
+    def k_from_preset_minimal(preset_position="LEFT", center_dist=1, amplitude=255):
+        pixels=19
         raster_size = (pixels, pixels)
         img_k_space = np.zeros(raster_size, dtype=complex)
         loc = FourierMathJuggling.pixel_position(raster_size, preset_position, center_dist)
         img_k_space[loc] = amplitude  # but not for the center
 
-        # if center_dist is not 0: #give it a small phase shift for nicer visualisation
-        #     img_k_space[loc] = amplitude*np.exp(1j*np.pi/2)
-        # else:
-        #     img_k_space[loc] = amplitude # but not for the center
+        if center_dist is not 0: #give it a small phase shift for nicer visualisation
+            img_k_space[loc] = amplitude*np.exp(1j*np.pi/2)
+        else:
+            img_k_space[loc] = amplitude # but not for the center
 
         return FourierMathJuggling(img_k_space)
 
@@ -240,6 +241,10 @@ class FourierMathJuggling(object):
 
     def get_amp_k_only(self):
         return np.abs(self.img_k_space)
+
+    def get_ph_k_only(self):
+        return (np.angle(self.img_k_space, deg=True))
+
 
     def get_amp_and_ph(self):
         img_kamp = np.abs(self.img_k_space)
@@ -280,7 +285,7 @@ class FourierMathJuggling(object):
             start_p = number / num_of_orders
             end_p = (number + 1) / num_of_orders
             # print(number / num_of_orders, "bis", (number + 1) / num_of_orders, position_s, center_s)
-            mask[pos] = Hendriks_step_functions.linear_step_func(step, start_p, end_p)
+            mask[pos] = StepFunctions.linear_step_func(step, start_p, end_p)
         return mask
 
     def apply_mask(self, t):
@@ -288,8 +293,8 @@ class FourierMathJuggling(object):
         self.img_k_space = self.img_k_space_original * mask
 
     def apply_spiral_mask(self, t):
-        spirale = Hendriks_step_functions.spiral(19, 19)
-        final_func_vectorised = np.vectorize(Hendriks_step_functions.step_machine, otypes=[np.float])
+        spirale = StepFunctions.spiral(19, 19)
+        final_func_vectorised = np.vectorize(StepFunctions.step_machine, otypes=[np.float])
         spiral_mask = final_func_vectorised(spirale, t)
         self.img_k_space = self.img_k_space_original * spiral_mask
 

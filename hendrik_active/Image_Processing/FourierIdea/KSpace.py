@@ -1,5 +1,6 @@
 from manimlib.imports import *
-from hendrik_active.Image_Processing.FourierIdea.FLOWER import FLOWER
+#from hendrik_active.Image_Processing.FourierIdea.FLOWER import FLOWER
+from hendrik_active.Image_Processing.FourierIdea.FLOWER_x import FLOWER
 
 global k_plane_size
 k_plane_size=0.7
@@ -76,7 +77,8 @@ class KSpace(VMobject):
             el.set_color(wanted_color)
 
             wanted_height = img_kamp[i]*self.mushroom_height
-            if wanted_height != 0:
+            #if wanted_height != 0: #bad idea, because phase breaks!
+            if wanted_height >= 0:
                 # set height
                 dot = Dot()
                 dot.move_to(el.get_center())
@@ -104,8 +106,8 @@ class KSpace(VMobject):
         for i, el in enumerate(t_objects):
             if img_kph[i] is not 0:  # do not call FLOWER when phase is even 0
                 # set height
-                flo = FLOWER(img_kph[i]).scale(0.31)  # when a lot of flowers ar in the game
-                # flo = FLOWER(img_kph[i]).scale(0.51)  # for minimal example
+                #flo = FLOWER_x(img_kph[i]).scale(0.31)  # when a lot of flowers ar in the game
+                flo = FLOWER(img_kph[i]).scale(0.51)  # for minimal example
                 flo.move_to(el.get_center()+ OUT*0.0001)
                 flo.set_shade_in_3d(True)
                 # append the pixels

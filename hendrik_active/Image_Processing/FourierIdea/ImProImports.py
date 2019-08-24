@@ -2,6 +2,7 @@ from manimlib.imports import *
 from hendrik_active.Image_Processing.FourierIdea.KSpace import *
 from hendrik_active.Image_Processing.FourierIdea.Realspace import *
 from hendrik_active.Image_Processing.FourierIdea.FourierMathJuggling import *
+from hendrik_active.Image_Processing.FourierIdea.FLOWER_x import FLOWER
 
 
 class Image_coordinate_system(VMobject):
