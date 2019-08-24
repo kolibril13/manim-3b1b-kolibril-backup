@@ -19,6 +19,7 @@ class RealImage(ThreeDScene):  # with real plane on the right
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
         #self.set_camera_orientation(phi=40 * DEGREES, theta=-60 * DEGREES) #TODO NO!
         k_math = FourierMathJuggling()
+        FourierMathJuggling.k_from_preset_uniform(7)
         k_math.k_from_real_in_old_woman() # has a 600x600 resolution
 
         pixels = k_math.get_pixels()
@@ -57,7 +58,7 @@ class RealImage(ThreeDScene):  # with real plane on the right
             #k_math.apply_transformations(val,sigma=0.05,mode="lowpass")
             #k_disp.set_magic_gauss(val,sigma=0.9, mode="lowpass")
             k_math.apply_transformations(val,sigma=0.9,mode="highpass")
-            k_disp.set_magic_gauss(val,sigma=0.9, mode="highpass")
+            k_disp.set_magic_gauss(val,sigma=0.9, mode=234)
             img_kamp, img_kph =k_math.get_amp_and_ph_DOWNSAMPLED(self.down_sample_factor)
             k_disp.fill_k_space_updater(img_kamp)
             print("animating")

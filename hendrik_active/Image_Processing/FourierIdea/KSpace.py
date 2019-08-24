@@ -9,7 +9,6 @@ class KSpace(VMobject):
         "pixel_len":23,
         "mushroom_height":3,
         "log2view":False,
-        "log10view":False,
         "overshoot_factor":1.,
         "magic_offset_z":k_plane_size
     }
@@ -59,9 +58,7 @@ class KSpace(VMobject):
             img_kamp = np.log2(img_kamp)
             img_kamp[img_kamp<0]= 0
             # img_kamp *= (img_kamp>0) not working
-        if self.log10view == True:
-            img_kamp = np.sqrt(np.sqrt(img_kamp))
-            img_kamp[img_kamp<0]= 0
+
         if new_amp_max == True:
             self.amp_max=img_kamp.max()
         img_kamp= img_kamp/self.amp_max
@@ -149,7 +146,7 @@ class KSpace(VMobject):
         def param_gauss_low(u,v):
             x=u
             y=v
-            d = np.sqrt(x * x + y * y)
+            d = np.sqrt(x * x + y * y) #TODO change to x **2
             mu = 0.0
             z= (1-(1-np.exp(-( (d-mu)**2 / ( 2.0 * sigma**2 ) ) ))*step) * self.mushroom_height
             return np.array([x,y,z])
