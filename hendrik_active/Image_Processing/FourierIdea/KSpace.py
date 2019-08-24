@@ -19,11 +19,12 @@ class KSpace(VMobject):
         PIXELS = self.pixel_len * self.pixel_len
         square_ALL = [Square(fill_opacity=1, side_length=1) for i in range(0, PIXELS)]
         j = 0
-        for i, square_to_move in enumerate(square_ALL):
+        for i, square_to_move in enumerate(square_ALL): #arange squares in an grid
             if i % self.pixel_len == 0:
                 j += 1
             k = i - j * self.pixel_len
             square_to_move.move_to((LEFT * k + j * DOWN))
+
         self.term= VGroup()
         self.flows= VGroup()
         self.lines_and_dots= VGroup()
@@ -69,7 +70,9 @@ class KSpace(VMobject):
         self.lines = VGroup()
         for i, el in enumerate(t_objects):
             # interpol_col
+            wanted_color_line = interpolate_color(DRAC_GREY, WHITE, img_kamp[i])
             wanted_color = interpolate_color(BLACK, WHITE, img_kamp[i])
+
             el.set_color(wanted_color)
 
             wanted_height = img_kamp[i]*self.mushroom_height
@@ -79,12 +82,12 @@ class KSpace(VMobject):
                 dot.move_to(el.get_center())
                 dot.set_z(wanted_height)
                 # set color
-                dot.set_color(wanted_color)
+                dot.set_color(wanted_color_line)
 
                 # make line
                 line = Line(dot.get_center(),
                             [dot.get_x(), dot.get_y(), 0],
-                            color=wanted_color)
+                            color=wanted_color_line)
                 # append the pixels
                 self.dots.add(dot)
                 self.lines.add(line)

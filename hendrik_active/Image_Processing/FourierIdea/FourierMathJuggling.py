@@ -267,32 +267,20 @@ class FourierMathJuggling(object):
         out = real_out_ar.real
         return out
 
-    ### mask section
-    @staticmethod  # TODO can be removed, because it is also in HEndrik's step functions
-    def linear_step_func(x, x0, x1):
-        y = np.piecewise(x, [
-            x < x0,
-            (x >= x0) & (x <= x1),
-            x > x1],
-                         [0.,
-                          lambda x: x / (x1 - x0) + x0 / (x0 - x1),
-                          1.]
-                         )
-        return y
 
     def setup_order(self, order):
         self.order = order
 
     def make_mask(self, step):  # step goes from 0 to 1
         raster = (self.pixels, self.pixels)
-        mask = np.full(raster, self.linear_step_func(step, 1, 1.2))
+        mask = np.full(raster, (step, 1, 1.2))
         num_of_orders = len(self.order)
         for number, (position_s, center_s) in enumerate(self.order):
             pos = self.pixel_position(raster, position_s, center_s)
             start_p = number / num_of_orders
             end_p = (number + 1) / num_of_orders
             # print(number / num_of_orders, "bis", (number + 1) / num_of_orders, position_s, center_s)
-            mask[pos] = self.linear_step_func(step, start_p, end_p)
+            mask[pos] = Hendriks_step_functions.linear_step_func(step, start_p, end_p)
         return mask
 
     def apply_mask(self, t):
@@ -309,7 +297,6 @@ class FourierMathJuggling(object):
 
     def param_gauss_low_juggling(self, step):  # step goes from 0 to 1
         raster = (self.pixels, self.pixels)
-        mask = np.full(raster, self.linear_step_func(step, 1, 1.2))
         x, y = np.meshgrid(np.linspace(-1, 1, self.pixels), np.linspace(-1, 1, self.pixels))
         d = np.sqrt(x * x + y * y)
         mu = 0
@@ -319,7 +306,6 @@ class FourierMathJuggling(object):
 
     def param_gauss_high_juggling(self, step):  # step goes from 0 to 1
         raster = (self.pixels, self.pixels)
-        mask = np.full(raster, self.linear_step_func(step, 1, 1.2))
         x, y = np.meshgrid(np.linspace(-1, 1, self.pixels), np.linspace(-1, 1, self.pixels))
         d = np.sqrt(x * x + y * y)
         mu = 0
