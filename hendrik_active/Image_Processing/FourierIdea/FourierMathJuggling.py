@@ -132,17 +132,14 @@ class FourierMathJuggling(object):
     ############ MAKE INPUT  ########
     def k_from_real_in_old_woman(self):
         name = "woman2x.png"
-        self.k_from_real_in(name=name)
+        self.k_from_real_image(name=name)
 
-    def k_from_real_in(self, name="woman2x.png", small_section: bool = False):  # init  ## set the input
+    def k_from_real_image(self, name="woman2x.png"):  # init  ## set the input
         path = './pictures/'
         img = Image.open(path + name)  ##open
         img_array = np.asarray(img)  # konv PIL Format in numpy format
         self.pixels = min(img_array.shape)
         img_array = img_array[0:self.pixels, 0:self.pixels]
-        if small_section == True:
-            img_array = img_array[::4, ::4]
-            img_array = img_array[50:80, 100:130]
         ##even make forier transform yet:
         f = np.fft.fft2(img_array)
         fshift = np.fft.fftshift(f)

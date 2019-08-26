@@ -20,7 +20,8 @@ class RealImageBuild(ThreeDScene):  # with real plane on the right
         #self.set_camera_orientation(phi=40 * DEGREES, theta=-60 * DEGREES) #TODO NO!
         k_math = FourierMathJuggling()
         FourierMathJuggling.k_from_preset_uniform(7)
-        k_math.k_from_real_in_old_woman() # has a 600x600 resolution
+        #k_math.k_from_real_in_old_woman() # has a 601x601 resolution
+        k_math.k_from_real_image("milkeyway.png")
         pixels = k_math.get_pixels()
         print("yes",pixels)
 
