@@ -35,6 +35,7 @@ class Scene2PhaseMore(ThreeDScene):  # with real plane on the right
 
         def update_ampli(mob):
             val=track.get_value()
+            print(val)
             k_math.img_k_space[11,9]=  255*StepFunctions.linear_step_func(track.get_value(),0,1)
             k_math.img_k_space[9,11] = 255*StepFunctions.linear_step_func(track.get_value(),1,2)
             if val >= 2:
@@ -49,11 +50,11 @@ class Scene2PhaseMore(ThreeDScene):  # with real plane on the right
         track = ValueTracker(start_val)
         self.play(track.increment_value, 1,UpdateFromFunc(k_disp, update_ampli),rate_func=linear,run_time=1)
         self.wait()
-        self.play(track.increment_value, 2,UpdateFromFunc(k_disp, update_ampli),rate_func=linear,run_time=2)
+        self.play(track.increment_value, 1,UpdateFromFunc(k_disp, update_ampli),rate_func=linear,run_time=2)
         self.wait(2)
-        self.play(track.increment_value, 3,UpdateFromFunc(k_disp, update_ampli),rate_func=linear,run_time=1.5)
+        self.play(track.increment_value, 1,UpdateFromFunc(k_disp, update_ampli),rate_func=linear,run_time=1.5)
         self.wait()
-        self.play(track.increment_value, 4,UpdateFromFunc(k_disp, update_ampli),rate_func=linear,run_time=1.5)
+        self.play(track.increment_value, 1,UpdateFromFunc(k_disp, update_ampli),rate_func=linear,run_time=1.5)
         self.wait(2)
         # # ##HERE STARTS THE LOOP:
         # ####change the phase
