@@ -249,9 +249,16 @@ class FourierMathJuggling(object):
         img_kph = (np.angle(self.img_k_space, deg=True))
         return img_kamp, img_kph
 
-    def get_amp_and_ph_DOWNSAMPLED(self, sample_fac):
-        self.img_k_space_downsampled = self.img_k_space[0::sample_fac, 0::sample_fac]
+    def get_amp_and_ph_DOWNSAMPLED(self, mute_peak_fac):
+        center = 301
+        width = 298
+        step = 27
+        temp_ar = np.array(self.img_k_space, copy=True)
+        self.img_k_space_downsampled = temp_ar[center - width:center + width:step, center - width:center + width:step]
+        self.img_k_space_downsampled[11,11]= self.img_k_space_downsampled[11,11]/mute_peak_fac
+
         img_kamp = np.abs(self.img_k_space_downsampled)
+        img_kamp[img_kamp>259482*2]=259482*2
         img_kph = (np.angle(self.img_k_space_downsampled, deg=True))
         self.pixels_DOWNSAMPLED = len(self.img_k_space_downsampled)
         return img_kamp, img_kph
@@ -266,7 +273,6 @@ class FourierMathJuggling(object):
         # calculate realspace
         k_space_ar_shift = np.fft.ifftshift(self.img_k_space)
         real_out_ar = np.fft.ifft2(k_space_ar_shift)  ####
-        # out=real_out_ar.real ##???? right???
         out = real_out_ar.real
         return out
 
