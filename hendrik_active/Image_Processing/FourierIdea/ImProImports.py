@@ -2,7 +2,9 @@ from manimlib.imports import *
 from hendrik_active.Image_Processing.FourierIdea.KSpace import *
 from hendrik_active.Image_Processing.FourierIdea.Realspace import *
 from hendrik_active.Image_Processing.FourierIdea.FourierMathJuggling import *
-from hendrik_active.Image_Processing.FourierIdea.FLOWER_x import FLOWER
+from hendrik_active.Image_Processing.FourierIdea.FLOWER import FLOWER
+linear_step_func=StepFunctions.linear_step_func
+
 
 
 class Image_coordinate_system(VMobject):

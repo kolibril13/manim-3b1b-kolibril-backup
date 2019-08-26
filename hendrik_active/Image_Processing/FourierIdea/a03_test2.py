@@ -7,7 +7,7 @@ k_plane_size=0.7
 
 
 ################################IMPORTANT HERE
-scene = "Scene01_different_amplitudes"  # FULL ANIMATION SCENE phase with real out
+scene = "Scene01DifferentAmplitudes"  # FULL ANIMATION SCENE phase with real out
 class Scene01_different_amplitudes(Scene):  # with real plane on the right
 
     def construct(self):

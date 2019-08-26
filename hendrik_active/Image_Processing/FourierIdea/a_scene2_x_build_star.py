@@ -34,31 +34,40 @@ class Scene01_different_amplitudes(ThreeDScene):  # with real plane on the right
         real_text = TextMobject("Real-Space").scale(0.75).next_to(real_out, DOWN)
         self.add_fixed_in_frame_mobjects(real_out, real_text)
 
-        def update_ampli(mob):
-            val=track.get_value()
-            k_math.img_k_space[11,9]=  255*StepFunctions.linear_step_func(track.get_value(),0,1)
-            k_math.img_k_space[9,11] = 255*StepFunctions.linear_step_func(track.get_value(),1,2)
-            if val >= 2:
-                k_math.img_k_space[11, 9] = 255 * (1-0.5*linear_step_func(track.get_value(), 2, 3))
-            if val >=3:
-                k_math.img_k_space[9, 11] = 255 * (1-0.3*linear_step_func(track.get_value(), 3, 4))
-            if val >= 4:
-                k_math.img_k_space[9, 11] = 255*0.7*np.exp(1j*TAU*linear_step_func(track.get_value(), 4, 6))
-                img_ph=  k_math.get_ph_k_only()
-                mob.set_phase_flowers_updater(img_ph)
-            mob.fill_k_space_updater(k_math.get_amp_k_only())
-            img_real= k_math.get_real_out()
+        # def update_ampli(mob):
+        #     val=track.get_value()
+        #     k_math.img_k_space[11,9]=  255*StepFunctions.linear_step_func(track.get_value(),0,1)
+        #     k_math.img_k_space[9,11] = 255*StepFunctions.linear_step_func(track.get_value(),1,2)
+        #     if val >= 2:
+        #         k_math.img_k_space[11, 9] = 255 * (1-0.5*linear_step_func(track.get_value(), 2, 3))
+        #     if val >=3:
+        #         k_math.img_k_space[9, 11] = 255 * (1-0.3*linear_step_func(track.get_value(), 3, 4))
+        #     mob.fill_k_space_updater(k_math.get_amp_k_only())
+        #     img_real= k_math.get_real_out()
+        #     real_out.fill_real_space(pixels ** 2 * img_real)
+        #     return mob
+        # start_val=1;end_val=4
+        # track = ValueTracker(start_val)
+        # self.play(track.increment_value, end_val,
+        #           UpdateFromFunc(k_disp, update_ampli),
+        #      rate_func=linear,run_time=0.1)
+        def update_phase(mob):
+            k_math.img_k_space[9, 11] = 255 * 0.7 * np.exp(1j * TAU * my_phase_tracker.get_value())
+            img_kamp, img_kph = k_math.get_amp_and_ph()
+            mob.fill_k_space_updater(img_kamp)
+            mob.set_phase_flowers_updater(img_kph)
+            mob.set_shade_in_3d(True)
+            img_real = k_math.get_real_out()
             real_out.fill_real_space(pixels ** 2 * img_real)
             return mob
-        start_val=4;end_val=6
-        track = ValueTracker(start_val)
-        self.play(track.increment_value, end_val,
-                  UpdateFromFunc(k_disp, update_ampli),
-             rate_func=linear,run_time=2)
-        self.wait(2)
+        my_phase_tracker = ValueTracker(0)
+        self.play(my_phase_tracker.increment_value, 90,
+                  UpdateFromFunc(k_disp, update_phase),
+                  rate_func=linear)
+        self.wait()
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim    -p     -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim    -l -p     -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)

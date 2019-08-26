@@ -1,13 +1,11 @@
 from manimlib.imports import *
-#from hendrik_active.Image_Processing.FourierIdea.FLOWER import FLOWER
-from hendrik_active.Image_Processing.FourierIdea.FLOWER_x import FLOWER
+from hendrik_active.Image_Processing.FourierIdea.FLOWER import FLOWER
 
 global k_plane_size
 k_plane_size=0.7
 
 class KSpace(VMobject):
     CONFIG = {
-        "pixel_len":23,
         "mushroom_height":3,
         "log2view":False,
         "overshoot_factor":1.,
@@ -15,7 +13,6 @@ class KSpace(VMobject):
     }
     def __init__(self , **kwargs):
         digest_config(self, kwargs)
-        print(self.pixel_len)
         VMobject.__init__(self, **kwargs)
         PIXELS = self.pixel_len * self.pixel_len
         square_ALL = [Square(fill_opacity=1, side_length=1) for i in range(0, PIXELS)]

@@ -8,7 +8,7 @@ k_plane_size=0.7
 
 
 ################################IMPORTANT HERE
-scene = "Scene01_different_amplitudes"  # FULL ANIMATION SCENE phase with real out
+scene = "Scene01DifferentAmplitudes"  # FULL ANIMATION SCENE phase with real out
 class Scene01_different_amplitudes(ThreeDScene):  # with real plane on the right
 
     def construct(self):
@@ -22,7 +22,7 @@ class Scene01_different_amplitudes(ThreeDScene):  # with real plane on the right
         k_disp= KSpace(pixel_len=pixels)
         k_disp.amp_max=255
 
-        k_math.phase_shift_single(100,preset_position="LEFT", center_dist=1)
+        k_math.phase_shift_single(180,preset_position="LEFT", center_dist=1)
         img_kamp,img_kph= k_math.get_amp_and_ph()
         k_disp.fill_k_space_updater(img_kamp)
         k_disp.set_shade_in_3d(True)
