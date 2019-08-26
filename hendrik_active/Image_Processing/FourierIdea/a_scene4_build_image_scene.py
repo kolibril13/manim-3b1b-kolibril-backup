@@ -20,8 +20,7 @@ class RealImageBuild(ThreeDScene):  # with real plane on the right
         #self.set_camera_orientation(phi=40 * DEGREES, theta=-60 * DEGREES) #TODO NO!
         k_math = FourierMathJuggling()
         FourierMathJuggling.k_from_preset_uniform(7)
-        #k_math.k_from_real_in_old_woman() # has a 601x601 resolution
-        k_math.k_from_real_image("milkeyway.png")
+        k_math.k_from_real_in_old_woman() # has a 601x601 resolution
         pixels = k_math.get_pixels()
         print("yes",pixels)
 
@@ -31,23 +30,17 @@ class RealImageBuild(ThreeDScene):  # with real plane on the right
         real_in.to_edge(UL)
         real_text_in = TextMobject("Input").next_to(real_in, DOWN)
         self.add_fixed_in_frame_mobjects(real_in, real_text_in)
-
-        k_math.img_k_space[300+27*1,300]= 259482*50
+        val0=k_math.img_k_space[300 + 27 * 1, 300]
+        # k_math.img_k_space[300+27*1,300]= val0*1+val0*100
+        k_math.img_k_space[301,301]=k_math.img_k_space[301,301]*100
         img_kamp, img_kph = k_math.get_amp_and_ph_DOWNSAMPLED(mute_peak_fac=170)
         pixels_DOWNSAMPLED = k_math.get_pixels_DOWNSAMPLED()
         k_disp = KSpace(pixel_len=pixels_DOWNSAMPLED)
         k_disp.overshoot_factor=1.8
-        k_disp.amp_max= 259482
-        k_disp.fill_k_space_updater(img_kamp) #init wit new_amp_max ture
-        print(k_disp.amp_max)
+        k_disp.fill_k_space_updater(img_kamp, new_amp_max=True)
         k_disp.set_shade_in_3d(True)
         self.add(k_disp)
-        print("yes",pixels_DOWNSAMPLED)
-
-
         img_out_real = k_math.get_real_out()
-        img_out_real[img_out_real<0]=0
-        img_out_real[img_out_real>255]=255
 
         real_out=ImageMobject(np.uint8(img_out_real)).scale(1.5)
         real_out.to_edge(UR)
