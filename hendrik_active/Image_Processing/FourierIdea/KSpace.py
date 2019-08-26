@@ -39,11 +39,6 @@ class KSpace(VMobject):
         ORI_POINT.set_z(0.0001)
         self.add(ORI_POINT)
 
-    # def fill_k_space_updater_settings(self,logview:bool=False, overshoot_factor=None, mushroom_height:float=1):
-    #     '''Must be called before every fill_k_space_updater'''
-    #     self.logview= logview
-    #     self.overshoot_factor=overshoot_factor
-    #     self.mushroom_height=mushroom_height
 
     def fill_k_space_updater(self, img_kamp, new_amp_max:bool=False):
         '''
