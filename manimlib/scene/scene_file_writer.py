@@ -51,9 +51,9 @@ class SceneFileWriter(object):
         if self.save_last_frame:
             image_dir = guarantee_existence(os.path.join(
                 consts.VIDEO_DIR,
-                module_directory,
-                scene_name,
-                "images",
+                #module_directory, #Hendrik
+                #scene_name,
+                #"images",
             ))
             self.image_file_path = os.path.join(
                 image_dir,
