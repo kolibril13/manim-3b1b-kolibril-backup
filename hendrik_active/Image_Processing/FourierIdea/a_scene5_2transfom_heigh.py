@@ -15,11 +15,7 @@ class Scene5RealImageTransformHigh(ThreeDScene):
         k_math.k_from_real_in_old_woman() # has a 601x601 resolution
         pixels = k_math.get_pixels()
 
-        img_in_real = k_math.get_real_in()
-        real_in = ImageMobject(np.uint8(img_in_real)).scale(1.5)
-        real_in.to_edge(UL)
-        real_text_in = TextMobject("Input").next_to(real_in, DOWN)
-        self.add_fixed_in_frame_mobjects(real_in, real_text_in)
+
         self.cut_off_the_top=170
         img_kamp, img_kph = k_math.get_amp_and_ph_DOWNSAMPLED(cut_off_the_top=self.cut_off_the_top) # here we have a cut_off_the_top, e.g. 2
         pixels_DOWNSAMPLED = k_math.get_pixels_DOWNSAMPLED()
@@ -28,6 +24,12 @@ class Scene5RealImageTransformHigh(ThreeDScene):
         k_disp.fill_k_space_updater(img_kamp, new_amp_max=True)
         k_disp.set_shade_in_3d(True)
         self.add(k_disp)
+
+        img_in_real = k_math.get_real_in()
+        real_in = ImageMobject(np.uint8(img_in_real)).scale(1.5)
+        real_in.to_edge(UL)
+        real_text_in = TextMobject("Input").next_to(real_in, DOWN)
+        self.add_fixed_in_frame_mobjects(real_in, real_text_in)
         print(pixels_DOWNSAMPLED)
         img_out_real = k_math.get_real_out()
         real_out=ImageMobject(np.uint8(img_out_real)).scale(1.5)
@@ -47,6 +49,7 @@ class Scene5RealImageTransformHigh(ThreeDScene):
             mob.set_shade_in_3d(True)
             img_real = k_math.get_real_out()
             real_out.become(ImageMobject(np.uint8(img_real)).scale(1.5).to_edge(UR))
+            real_in.become(ImageMobject(np.uint8(img_in_real)).scale(1.5).to_edge(UL))
             return mob
 
         queenstracker = ValueTracker(0)
@@ -63,6 +66,6 @@ class Scene5RealImageTransformHigh(ThreeDScene):
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim   -p   -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim   -p  -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)
