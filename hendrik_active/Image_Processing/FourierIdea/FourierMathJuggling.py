@@ -134,6 +134,7 @@ class FourierMathJuggling(object):
         name = "woman2x.png"
         self.k_from_real_image(name=name)
 
+
     def k_from_real_image(self, name="woman2x.png"):  # init  ## set the input
         path = './pictures/'
         img = Image.open(path + name)  ##open
@@ -249,30 +250,29 @@ class FourierMathJuggling(object):
         img_kph = (np.angle(self.img_k_space, deg=True))
         return img_kamp, img_kph
 
-    def get_amp_and_ph_DOWNSAMPLED(self, mute_peak_fac):
+    def get_amp_and_ph_DOWNSAMPLED(self,cut_off_the_top=10):
         center = 301
         width = 298
         step = 27
         temp_ar = np.array(self.img_k_space, copy=True)
         self.img_k_space_downsampled = temp_ar[center - width:center + width:step, center - width:center + width:step]
-        self.img_k_space_downsampled[11,11]= self.img_k_space_downsampled[11,11]/mute_peak_fac
-
         img_kamp = np.abs(self.img_k_space_downsampled)
-        #img_kamp[img_kamp>259482*2]=259482*2 #TODO!! anpassen
+        max_cutoff = self.img_k_space_downsampled[11, 11] / cut_off_the_top
+        img_kamp[img_kamp > max_cutoff] = max_cutoff
         img_kph = (np.angle(self.img_k_space_downsampled, deg=True))
         self.pixels_DOWNSAMPLED = len(self.img_k_space_downsampled)
         return img_kamp, img_kph
 
-    def get_amp_and_ph_ZOOMED(self, mute_peak_fac):
+    def get_amp_and_ph_ZOOMED(self, cut_off_the_top=2):
         center = 300
-        width = 11
+        width = 4
         step = 1
         temp_ar = np.array(self.img_k_space, copy=True)
         self.img_k_space_downsampled = temp_ar[center - width:center + width+step:step, center - width:center + width+step:step]
-        self.img_k_space_downsampled[11,11]= self.img_k_space_downsampled[11,11]/mute_peak_fac
 
         img_kamp = np.abs(self.img_k_space_downsampled)
-        #img_kamp[img_kamp>259482*2]=259482*2 #TODO!! anpassen
+        max_cutoff = self.img_k_space_downsampled[4,4]/cut_off_the_top
+        img_kamp[img_kamp>max_cutoff]= max_cutoff
         img_kph = (np.angle(self.img_k_space_downsampled, deg=True))
         self.pixels_ZOOMED = len(self.img_k_space_downsampled)
         return img_kamp, img_kph

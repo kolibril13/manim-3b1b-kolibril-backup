@@ -5,35 +5,29 @@ from manimlib.imports import *
 global k_plane_size
 k_plane_size=0.7
 
-
-scene = "RealImageBuild"
-class RealImageBuild(ThreeDScene):  # with real plane on the right
-    CONFIG={
-        "down_sample_factor":24, # cool! take every 24th pixel
-        # "down_sample_factor": 50,
-        "log10view":True
-    }
+scene = "Scene5RealImageMilkey"
+class Scene5RealImageMilkey(ThreeDScene):
     def construct(self):
-        self.add(Image_coordinate_system())
+        self.add(Image_coordinate_system(zoomed=True))
         self.camera.frame_center.shift(2 * OUT)
         self.set_camera_orientation(phi=75 * DEGREES, theta=-60 * DEGREES)  # 2.5D
-        #self.set_camera_orientation(phi=40 * DEGREES, theta=-60 * DEGREES) #TODO NO!
         k_math = FourierMathJuggling()
-        FourierMathJuggling.k_from_preset_uniform(7)
-        k_math.k_from_real_in_old_woman() # has a 601x601 resolution
-        pixels = k_math.get_pixels()
-        print("yes",pixels)
+        k_math.k_from_real_image("milkeyway.png") # has a 601x601 resolution
+        pos = (296, 300)
+        k2= np.ones((601,601))
+        k2[pos]= 255*601 ** 2 / 5
+        k_math_2 = FourierMathJuggling(k2)
 
+        # val0 = k_math.img_k_space[pos]
+        # k_math.img_k_space[pos] = val0*30
+        pixels = k_math_2.get_pixels()
 
-        img_in_real = k_math.get_real_in()
-        real_in = ImageMobject(np.uint8(img_in_real)).scale(1.5)
+        img_in_real2 = k_math_2.get_real_out()
+        real_in = ImageMobject(np.uint8(img_in_real2)).scale(1.5)
         real_in.to_edge(UL)
         real_text_in = TextMobject("Input").next_to(real_in, DOWN)
         self.add_fixed_in_frame_mobjects(real_in, real_text_in)
-        pos= (300,298)
-        val0 = k_math.img_k_space[pos]
-        k_math.img_k_space[pos] = val0 * 20
-        img_kamp, img_kph = k_math.get_amp_and_ph_ZOOMED(mute_peak_fac=1)
+        img_kamp, img_kph = k_math.get_amp_and_ph_ZOOMED() # here we have a cut_off_the_top, e.g. 2
         pixels_ZOOMED = k_math.get_pixels_ZOOMED()
         k_disp = KSpace(pixel_len=pixels_ZOOMED)
         k_disp.overshoot_factor=1.8
@@ -41,19 +35,22 @@ class RealImageBuild(ThreeDScene):  # with real plane on the right
         k_disp.set_shade_in_3d(True)
         self.add(k_disp)
 
-
         img_out_real = k_math.get_real_out()
-        real_out=ImageMobject(np.uint8(img_out_real)).scale(1.5)
+        insg=img_out_real+img_in_real2
+        insg[insg<0]=0
+        insg[insg>255]=255
+        insg=np.uint8(insg)
+        real_out=ImageMobject(np.uint8(insg)).scale(1.5)
         real_out.to_edge(UR)
         real_text = TextMobject("Real-Space").next_to(real_out, DOWN)
         self.add_fixed_in_frame_mobjects(real_out, real_text)
-
-
-
+        from PIL import Image
+        result = Image.fromarray((insg).astype(np.uint8))
+        result.save('out.png')
 
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command_A = "manim   -p -s -c '#1C758A' --video_dir ~/Downloads/  "
+    command_A = "manim   -p -s  -c '#1C758A' --video_dir ~/Downloads/  "
     command_B = module_name +" " + scene
     os.system(command_A + command_B)

@@ -53,7 +53,7 @@ class RealImage(ThreeDScene):  # with real plane on the right
 
         #HERE STARTS THE LOOP:
         ####change the phase
-        def amp_tansformer(mob):
+        def apply_filter(mob):
             val= queenstracker.get_value()
             #k_math.apply_transformations(val,sigma=0.05,mode="lowpass")
             #k_disp.set_magic_gauss(val,sigma=0.9, mode="lowpass")
@@ -69,7 +69,7 @@ class RealImage(ThreeDScene):  # with real plane on the right
         queenstracker = ValueTracker(0)
         end_val=1
         self.play(queenstracker.increment_value, end_val,
-                  UpdateFromFunc(k_disp, amp_tansformer),
+                  UpdateFromFunc(k_disp, apply_filter),
                   rate_func=linear,run_time=3)
         print("end")
         self.wait(2)
