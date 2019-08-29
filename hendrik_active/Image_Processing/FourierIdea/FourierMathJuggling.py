@@ -291,6 +291,23 @@ class FourierMathJuggling(object):
         out = real_out_ar.real
         out[out < 0] = 0
         out[out > 255] = 255
+
+        return out
+
+    @staticmethod
+    def Imstretch(a):
+        m = a.min();
+        M = a.max();
+        return np.uint8((256 - 1) / (M - m) * (a - m))
+
+    def get_real_out_strectched(self):
+        # calculate realspace
+        k_space_ar_shift = np.fft.ifftshift(self.img_k_space)
+        real_out_ar = np.fft.ifft2(k_space_ar_shift)  ####
+        out = real_out_ar.real
+        out[out < 0] = 0
+        out[out > 255] = 255
+        out= self.Imstretch(out)
         return out
 
 
