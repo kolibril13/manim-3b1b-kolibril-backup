@@ -1,4 +1,5 @@
 from PIL import Image
+from PIL import  ImageOps
 import numpy as np
 
 
@@ -257,8 +258,10 @@ class FourierMathJuggling(object):
         temp_ar = np.array(self.img_k_space, copy=True)
         self.img_k_space_downsampled = temp_ar[center - width:center + width:step, center - width:center + width:step]
         img_kamp = np.abs(self.img_k_space_downsampled)
-        max_cutoff = self.img_k_space_downsampled[11, 11] / cut_off_the_top
-        img_kamp[img_kamp > max_cutoff] = max_cutoff
+        self.max_cutoff = 259482
+        print("here",self.max_cutoff)
+        img_kamp[11, 11]= img_kamp[11, 11]/100
+        img_kamp[img_kamp > self.max_cutoff] = self.max_cutoff
         img_kph = (np.angle(self.img_k_space_downsampled, deg=True))
         self.pixels_DOWNSAMPLED = len(self.img_k_space_downsampled)
         return img_kamp, img_kph
@@ -363,6 +366,7 @@ class FourierMathJuggling(object):
         if mode == "highpass":
             self.plane_func = self.param_gauss_high_juggling
         g_mask = self.plane_func(t)
+        print(g_mask[200,200])
         self.img_k_space = self.img_k_space_original * g_mask
 
     def __str__(self):

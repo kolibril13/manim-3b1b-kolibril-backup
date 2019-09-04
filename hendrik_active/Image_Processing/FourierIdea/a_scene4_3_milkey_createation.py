@@ -22,7 +22,9 @@ class Scene5RealImageMilkey(ThreeDScene):
         # k_math.img_k_space[pos] = val0*30
         pixels = k_math_2.get_pixels()
 
-        img_in_real2 = k_math_2.get_real_out()
+        # img_in_real2 = k_math_2.get_real_out()
+        img_in_real2=np.fromfunction(lambda i, j: 60*np.sin(i/601), (601, 601))
+
         real_in = ImageMobject(np.uint8(img_in_real2)).scale(1.5)
         real_in.to_edge(UL)
         real_text_in = TextMobject("Input").next_to(real_in, DOWN)

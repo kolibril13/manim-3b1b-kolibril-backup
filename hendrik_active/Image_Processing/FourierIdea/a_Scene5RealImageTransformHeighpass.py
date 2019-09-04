@@ -5,8 +5,8 @@ from manimlib.imports import *
 global k_plane_size
 k_plane_size=0.7
 
-scene = "Scene5RealImageTransformLowAmp"
-class Scene5RealImageTransformLowAmp(ThreeDScene):
+scene = "Scene5RealImageTransformHeighpass"
+class Scene5RealImageTransformHeighpass(ThreeDScene):
     def construct(self):
         self.add(Image_coordinate_system(downsampled=True))
         self.camera.frame_center.shift(2 * OUT)
@@ -20,8 +20,7 @@ class Scene5RealImageTransformLowAmp(ThreeDScene):
         real_in.to_edge(UL)
         real_text_in = TextMobject("Input").next_to(real_in, DOWN)
         self.add_fixed_in_frame_mobjects(real_in, real_text_in)
-        self.cut_off_the_top=170
-        img_kamp, img_kph = k_math.get_amp_and_ph_DOWNSAMPLED(cut_off_the_top=self.cut_off_the_top) # here we have a cut_off_the_top, e.g. 2
+        img_kamp, img_kph = k_math.get_amp_and_ph_DOWNSAMPLED() # here we have a cut_off_the_top, e.g. 2
         pixels_DOWNSAMPLED = k_math.get_pixels_DOWNSAMPLED()
         k_disp = KSpace(pixel_len=pixels_DOWNSAMPLED)
         k_disp.overshoot_factor=1.8
@@ -40,8 +39,8 @@ class Scene5RealImageTransformLowAmp(ThreeDScene):
             #k_math.apply_transformations(val,sigma=0.05,mode="lowpass")
             #k_disp.set_magic_gauss(val,sigma=0.9, mode="lowpass")
             k_math.apply_transformations(val, sigma=0.2, mode="highpass")
-            k_disp.set_magic_gauss(val, sigma=0.9, mode="highpass")
-            img_kamp, img_kph = k_math.get_amp_and_ph_DOWNSAMPLED(cut_off_the_top=self.cut_off_the_top)
+            k_disp.set_magic_gauss(val, sigma=0.6, mode="highpass")
+            img_kamp, img_kph = k_math.get_amp_and_ph_DOWNSAMPLED()
             k_disp.fill_k_space_updater(img_kamp)
             print("animating")
             mob.set_shade_in_3d(True)
@@ -50,14 +49,13 @@ class Scene5RealImageTransformLowAmp(ThreeDScene):
             return mob
 
         queenstracker = ValueTracker(0)
-        end_val = 0.99
+        end_val = 0.999
         self.play(queenstracker.increment_value, end_val,
                   UpdateFromFunc(k_disp, apply_filter),
-                  rate_func=linear,run_time=12)
-        print("end")
-        self.wait(2)
+                  rate_func=lambda t: there_and_back(t), run_time=12)
+        # self.play(queenstracker.increment_value, end_val,
+        #          UpdateFromFunc(k_disp, apply_filter),rate_func=linear)
 
-        print("end")
 
 
 

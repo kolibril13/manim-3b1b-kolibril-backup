@@ -98,10 +98,9 @@ class KSpace(VMobject):
         for i, el in enumerate(t_objects):
             if img_kph[i] is not 0:  # do not call FLOWER when phase is even 0
                 # set height
-                #flo = FLOWER_x(img_kph[i]).scale(0.31)  # when a lot of flowers ar in the game
-                flo = FLOWER(img_kph[i]).scale(0.51)  # for minimal example
+                flo = FLOWER(img_kph[i]).scale(0.25)  # when a lot of flowers ar in the game
+                #flo = FLOWER(img_kph[i]).scale(0.51)  # for minimal example
                 flo.move_to(el.get_center()+ OUT*0.0001)
-                flo.set_shade_in_3d(True)
                 # append the pixels
                 self.new_flows.add(flo)
         self.flows.become(self.new_flows)
