@@ -1,6 +1,7 @@
 # Image Processing with manim
 This Fork is for Image Processing purpose.
-See the following example:
-
-<img src="Example1.png" alt="Kitten"
-	title="A cute kitten" width="150" height="100" />
+See the following examples, the code is [here](hendrik_active/Image_Processing/FourierIdea):
+![](Example1.png)
+![](Example2.png)
+![](Example3.png)
+![](Example4.png)
