@@ -31,5 +31,6 @@ class Parametric_Function(Scene):
         self.wait(1)
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command = "python3.7 -m manim  -p   -a --leave_progress_bars " + module_name
-    os.system(command)
+    command_A = "manim -p  -c '#2B2B2B' --video_dir ~/Downloads/  "
+    command_B = module_name + " " + "Parametric_Function"
+    os.system(command_A + command_B)

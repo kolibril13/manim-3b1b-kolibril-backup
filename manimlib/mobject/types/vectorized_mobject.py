@@ -31,7 +31,7 @@ from manimlib.utils.space_ops import get_norm
 class VMobject(Mobject):
     CONFIG = {
         "fill_color": None,
-        "fill_opacity": 1.0,
+        "fill_opacity": 0.0,
         "stroke_color": None,
         "stroke_opacity": 1.0,
         "stroke_width": DEFAULT_STROKE_WIDTH,

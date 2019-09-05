@@ -1,6 +1,6 @@
 from manimlib.imports import *
 
-class PlotFunctions(GraphScene):
+class Generation(GraphScene):
     CONFIG = {
         "OFFSET": 1,
     }
@@ -26,6 +26,8 @@ class PlotFunctions(GraphScene):
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command = "python3.7 -m manim  -p  --leave_progress_bars -a " + module_name
-    os.system(command)
+    command_A = "manim -p -s -c '#2B2B2B' --video_dir ~/Downloads/  "
+    command_B = module_name + " " + "Generation"
+    os.system(command_A + command_B)
+
 

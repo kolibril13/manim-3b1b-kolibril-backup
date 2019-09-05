@@ -1,8 +1,6 @@
-# Manim Image Processing Fork
-
-This Fork is for Imageprocessing pupouse.
+# Image Processing with manim
+This Fork is for Image Processing purpose.
 See the following example:
 
-<img src="Star_Fourier.png"
-     alt="Markdown Monster icon"
-     style="float: left; margin-right: 10px;" />
+<img src="Example1.png" alt="Kitten"
+	title="A cute kitten" width="150" height="100" />
