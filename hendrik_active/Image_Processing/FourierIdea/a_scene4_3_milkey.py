@@ -39,8 +39,8 @@ class Scene5RealImageMilkey(ThreeDScene):
 
         val0 = k_math.img_k_space[10:297, 300]
         val1 = k_math.img_k_space[304:580, 300]
-        valx= val0.copy()
-        valy= val1.copy()
+        valx= val0.deepcopy()
+        valy= val1.deepcopy()
         self.wait(2)
         def amp_tansformer(mob):
             fa=queenstracker.get_value()
