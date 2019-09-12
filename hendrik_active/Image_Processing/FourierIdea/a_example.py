@@ -38,9 +38,9 @@ class Example(ThreeDScene):
         img_real = k_math.get_real_out()
         real_out.become(ImageMobject(np.uint8(img_real)).scale(1.5).to_edge(UR))
 
-## this is done for pycharm
-# if __name__ == "__main__":
-#     module_name = os.path.basename(__file__)
-#     command_A = "manim   -p  -s  -c '#1C758A' --video_dir ~/Downloads/  "
-#     command_B = module_name +" " + scene
-#     os.system(command_A + command_B)
+# this is done for pycharm
+if __name__ == "__main__":
+    module_name = os.path.basename(__file__)
+    command_A = "manim   -p  -s  -c '#1C758A' --video_dir ~/Downloads/  "
+    command_B = module_name +" " + scene
+    os.system(command_A + command_B)
