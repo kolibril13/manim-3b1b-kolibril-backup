@@ -1,6 +1,7 @@
 import inspect
 import random
 import warnings
+import platform
 
 from tqdm import tqdm as ProgressDisplay
 import numpy as np
@@ -307,6 +308,7 @@ class Scene(Container):
         time_progression = ProgressDisplay(
             times, total=n_iterations,
             leave=self.leave_progress_bars,
+            ascii=False if platform.system() != 'Windows' else True
         )
         return time_progression
 
