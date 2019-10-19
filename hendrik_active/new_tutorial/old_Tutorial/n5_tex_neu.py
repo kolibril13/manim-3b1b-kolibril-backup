@@ -1,9 +1,15 @@
 from manimlib.imports import *
 class AddingText(Scene):
     def construct(self):
-        t_1=TexMobject(r"\frac{\partial \rho}{\partial t}+ \frac{\partial(\rho u_{i})}{\partial x_{i}} = 0")
-        self.add(t_1)
-        self.wait(1)
+        text= TexMobject(
+            "\\sqrt{",
+            "dx}"
+        )
+        text2 = TexMobject(
+            r"\begin{array}{c} 0 \\ ",
+            r"0\\ 1 \end{array}"
+        )
+        self.add(text2)
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)

@@ -42,7 +42,7 @@ class GraphScene(Scene):
         "y_labeled_nums": None,
         "y_axis_label": "$y$",
         "axes_color": GREY,
-        "graph_origin": 2.5 * DOWN + 4 * LEFT,
+        "graph_origin": ORIGIN,
         "exclude_zero_label": True,
         "default_graph_colors": [BLUE, GREEN, YELLOW],
         "default_derivative_color": GREEN,

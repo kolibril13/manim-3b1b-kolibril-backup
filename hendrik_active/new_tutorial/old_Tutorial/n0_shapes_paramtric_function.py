@@ -10,12 +10,16 @@ class ParamFunc(Scene):
         print(len(func.points))
         # dot = Dot()
         # self.add(dot)
-        # self.add(func.scale(3))
+        print(dir(func))
+        #breakpoint()
+        func.set_color_by_gradient(BLUE, RED)
+
+        self.add(func.scale(3))
         # self.wait(3)
 
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command = "manim  -s  " + module_name + " ParamFunc "
+    command = "manim  -p -s  " + module_name + " ParamFunc "
     os.system(command)
 

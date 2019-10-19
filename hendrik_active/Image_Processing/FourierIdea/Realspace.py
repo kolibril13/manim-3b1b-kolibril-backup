@@ -16,10 +16,12 @@ class Realspace(VMobject):
         PIXELS = pixel_len * pixel_len
         square_ALL = [Square(fill_opacity=1, side_length=1 , stroke_width=0) for i in range(0, PIXELS)]
         j = 0
+        print(j)
         for i, square_to_move in enumerate(square_ALL):
             if i % self.pixel_len == 0:
                 j += 1
             k = i - j * self.pixel_len
+            print(k)
             square_to_move.move_to((LEFT * k + j * DOWN))
         self.term.add(*square_ALL)
         self.add(self.term)

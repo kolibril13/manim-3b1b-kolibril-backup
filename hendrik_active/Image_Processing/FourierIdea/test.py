@@ -1,10 +1,18 @@
+from hendrik_active.Image_Processing.FourierIdea.ImProImports import \
+    FourierMathJuggling,Image_coordinate_system, KSpace, Realspace,Comp_axis
 from manimlib.imports import *
 
 class laalaa(Scene):
     def construct(self):
-        obj= SVGMobject(file_name="arrow.svg")
-        dot = Dot()
-        self.add(dot)
+        k_math= FourierMathJuggling()
+        k_math.k_from_real_in_old_woman()
+        pixels=k_math.get_pixels()
+        woman=k_math.get_real_in()
+        print("yes")
+
+        image_disp=Realspace(pixels)
+        image_disp.fill_real_space(woman)
+        self.add(image_disp)
         self.wait(2)
 
     

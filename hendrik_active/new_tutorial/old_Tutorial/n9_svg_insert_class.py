@@ -2,7 +2,7 @@ from manimlib.imports import *
 
 class MEIN(Dot,SVGMobject):
     def __init__(self):
-        path="/home/jan-hendrik/Downloads/Snowflake.svg"
+        path="/home/jan-hendrik/Downloads/pylogo.svg"
         SVGMobject.__init__(self, path)
 
 class svg_datei(Scene):
