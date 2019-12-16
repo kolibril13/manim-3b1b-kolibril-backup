@@ -17,33 +17,12 @@ class AddingText(Scene):
         self.play(Transform(t_1, t_2_move))
         self.play(Transform(t_2_move, t_3))
         self.play(Transform(t_3, t_4))
-
+        t_5 = TexMobject(r"\Rightarrow \Psi(x, t) = \sum_j C_j \cdot e^{-i( k_j \cdot x -  \frac{k_j}{c(k_j)} \cdot t )}")
+        self.add(t_5.shift(DOWN))
         self.wait(2)
 
-
-
-
-        # my_first_text=TextMobject("Writing with manim is fun")
-        # second_line=TextMobject("and easy to do!")
-        # second_line.next_to(my_first_text,DOWN)
-        # third_line=TextMobject(r"for me and you!")
-        # third_line.next_to(my_first_text,DOWN)
-        # fourth_line=TexMobject(r"\vec{F}_{net} = \sum_i \vec{F}_i")
-        # fourth_line.next_to(my_first_text,DOWN)
-        #
-        # self.add(my_first_text, second_line)
-        # self.wait(2)
-        # self.play(Transform(second_line,third_line))
-        # self.wait(2)
-        # self.play(Transform(second_line,fourth_line))
-        # self.wait(2)
-        # second_line.shift(3*DOWN)
-        # self.play(ApplyMethod(my_first_text.shift,3*UP))
-        ###Try uncommenting the following###
-        #self.play(ApplyMethod(second_line.move_to, LEFT_SIDE-2*LEFT))
-        #self.play(ApplyMethod(my_first_text.next_to,second_line))
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
     folder = "  -o  /home/jan-hendrik/python/projects/tricks_for_python/jupyter/videoC "
-    command = "python3.7 -m manim  -p -a " + folder + module_name
+    command = "python3.7 -m manim  -p  -s -a " + folder + module_name
     os.system(command)

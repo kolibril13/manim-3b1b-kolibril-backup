@@ -1,6 +1,6 @@
 from manimlib.imports import *
 
-class TinyUpdater(Scene): #Two Options to update a scene one more nested, one more explicit
+class TinyUpdater(Scene):
 
     def construct(self):
         run_setting = {"run_time": 1, "rate_func": linear}
@@ -15,6 +15,8 @@ class TinyUpdater(Scene): #Two Options to update a scene one more nested, one mo
                 print(val_trackerX.get_value())
                 return mob
             return UpdateFromFunc(dots, small_change2)
+
+
         tick_start = 0
         tick_end = 100
         self.play(Tiny_Updater(dot_disp,val_tracker),val_tracker.set_value,tick_end,**run_setting)
