@@ -44,6 +44,17 @@ class ThreeDScene(Scene):
         self.camera.theta_tracker.clear_updaters()
         self.remove(self.camera.theta_tracker)
 
+
+    def begin_vertical_camera_rotation(self, rate=0.02):
+        self.camera.phi_tracker.add_updater(
+            lambda m, dt: m.increment_value(rate * dt)
+        )
+        self.add(self.camera.phi_tracker)
+
+    def stop_vertical_camera_rotation(self):
+        self.camera.phi_tracker.clear_updaters()
+        self.remove(self.camera.phi_tracker)
+
     def move_camera(self,
                     phi=None,
                     theta=None,

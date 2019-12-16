@@ -7,6 +7,8 @@ from manimlib.utils.simple_functions import sigmoid
 def linear(t):
     return t
 
+def hendrik_const(t):
+    return (1+t**2)**(1/2)
 
 def smooth(t, inflection=10.0):
     error = sigmoid(-inflection / 2)
