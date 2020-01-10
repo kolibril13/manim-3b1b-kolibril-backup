@@ -35,6 +35,6 @@ class PlotFunctions(GraphScene):
 
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
-    command = "python3.7 -m manim  -p  --leave_progress_bars " + module_name + " PlotFunctions "
+    command = "manim -t -p  --leave_progress_bars " + module_name + " PlotFunctions "
     os.system(command)
 
