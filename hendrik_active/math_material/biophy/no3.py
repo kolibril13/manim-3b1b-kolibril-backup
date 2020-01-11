@@ -9,7 +9,7 @@ class No3(Scene):
             mob.shift(RIGHT*dt*1)
 
         def update_white_dot(self):
-            self.match_x(red_dot)  # where 'dot' is the red dot
+            self.match_x(red_dot)
 
         red_dot.add_updater(update_red_dot)
         white_dot.add_updater(update_white_dot)

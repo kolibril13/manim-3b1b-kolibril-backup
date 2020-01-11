@@ -8,7 +8,7 @@ class No2(Scene):
         path.set_points_as_corners([dot.get_center(),dot.get_center()+UP*0.01])
         def update_path(path):
             previus_path = path.copy()
-            previus_path.add_points_as_corners([dot.get_center()])
+            previus_path.set_points_as_corners([dot.get_center()])
             path.become(previus_path)
         path.add_updater(update_path)
         self.add(path,dot)
@@ -20,12 +20,3 @@ if __name__ == "__main__":
     command_B = module_name +" " +"No2"
     os.system(command_A + command_B)
 
-        #
-        # self.play(
-        # Rotating(
-        #     dot,
-        #     radians=PI,
-        #     about_point=RIGHT,
-        #     run_time=2
-        # )
-        # ,rate_func= linear
