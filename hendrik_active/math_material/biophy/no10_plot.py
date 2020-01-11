@@ -15,8 +15,8 @@ class No10(Scene):
         kP_on = 11.6
         kP_off = 1.4
 
-        def dnP(x):
-            return kP_on*x- kP_off
+        def dnP(concentration):
+            return kP_on*concentration- kP_off
 
         sns.set_context("talk")
         plt.plot(x, dnP(x) , label= r"Plus end  $\frac{dn^+}{dt}$" )
