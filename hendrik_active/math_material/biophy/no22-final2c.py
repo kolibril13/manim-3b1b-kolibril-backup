@@ -2,13 +2,14 @@ from manimlib.imports import *
 
 class No20c(Scene):
     def construct(self):
-        # background of scene
-        N=200#0  #->2000 final
+        # rate equation
         kP_off= 1.4
         kP_on = 11.6
-
-        concentration_fraction= kP_off/kP_on
+        N=2000  #->2000 final
+        concentration_fraction= 2*kP_off/kP_on
         concentration = concentration_fraction* N
+
+        # background of scene
         x  = np.random.uniform(-0.445*FRAME_WIDTH,0.445*FRAME_WIDTH, np.uint(concentration))
         y = np.random.uniform(-0.145*FRAME_HEIGHT,0.145*FRAME_HEIGHT, np.uint(concentration))
         sq= Rectangle(width=0.45*FRAME_WIDTH*2,height= 0.15*FRAME_HEIGHT*2)
@@ -17,22 +18,9 @@ class No20c(Scene):
         for xi, yi in zip(x,y):
             bg_con.add(Dot(point=[xi,yi,0],radius=0.03, fill_opacity=0.3))
         self.add(bg_con, sq)
-        title = TextMobject("Polymerization Kinetics").scale(2)
-        self.add(title.next_to(sq,UP, buff=LARGE_BUFF))
-        ## equation
-        eq1 = TexMobject(r"\frac{dn^+}{dt} = "," - k^+_{off}", " + c_A \cdot k^+_{on}")
-        #eq1.submobjects[2].set_style(fill_opacity=0)
-        self.add(eq1.to_edge(DL))
 
 
-
-
-
-        # rate equation
-        kP_off= 1.4
-        kP_on = 11.6
-
-        blue_dot = Dot(radius= 0.3, color= RED)
+        blue_dot = Dot(radius= 0.3, color= BLUE)
 
         wdPoffs = [Dot(point=LEFT) for i in range(0,2)]
         for val, wdPoff in enumerate(wdPoffs): # offs
@@ -98,8 +86,15 @@ class No20c(Scene):
         self.add(*wdPons)
         self.add(*[wdPon.subdot for wdPon in wdPons])
 
+        title = TextMobject("Polymerization Kinetics").scale(2)
+        self.add(title.next_to(sq,UP, buff=LARGE_BUFF))
+        ## equation
+        eq1 = TexMobject(r"\frac{dn^+}{dt} = "," - k^+_{off}", " + c_A \cdot k^+_{on}")
+        #eq1.submobjects[2].set_style(fill_opacity=0)
+        self.add(eq1.to_edge(DL))
+
         #eq
-        ec1=TexMobject(r"c_A = 0 \rightarrow \text{shrinking filament}")
+        ec1=TexMobject(r"c_A >  \frac{k^+_{off}}{k^+_{on}}  \rightarrow \text{growing filament}")
         ec1.next_to(sq, DOWN)
         ec1.align_to(sq.get_corner(RIGHT),RIGHT)
         self.add(ec1)

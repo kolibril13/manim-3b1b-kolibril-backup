@@ -23,6 +23,11 @@ class No10(Scene):
 
         title = TextMobject("Polymerization Kinetics").scale(2)
         self.add(title.next_to(bg_con,UP, buff=LARGE_BUFF))
+
+        ec1=TexMobject(r"c_A = 0 \rightarrow \text{shrinking filament}")
+        ec2=TexMobject(r"c_A = \frac{k^+_{off}}{k^+_{on}} \rightarrow \text{constant length}")
+        ec3=TexMobject(r"c_A >  \frac{k^+_{off}}{k^+_{on}}  \rightarrow \text{growing filament}")
+
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
     command_A = "manim -p -s  -c '#2B2B2B' --video_dir ~/Downloads/  "
