@@ -1,6 +1,6 @@
 from manimlib.imports import *
 
-class random(Scene):
+class PrincipleComponent(Scene):
     def construct(self):
         steps=np.loadtxt("random_steps.csv")
         print(steps.shape)
@@ -15,5 +15,5 @@ class random(Scene):
 if __name__ == "__main__":
     module_name = os.path.basename(__file__)
     command_A = "manim   -p -l -c '#2B2B2B' --video_dir ~/Downloads/  "
-    command_B = module_name +" " +"random"
+    command_B = module_name +" " +"PrincipleComponent"
     os.system(command_A + command_B)
