@@ -1,6 +1,6 @@
 # Image Processing with manim
 This Fork is for Image Processing purpose.
-See the following examples, the code is [here](hendrik_active/Image_Processing/FourierIdea).
+See the following examples, the code is [here](hendrik_old/Image_Processing/FourierIdea).
 Best script to get started is:
 `a_example.py`
 ![](Example1.png)
