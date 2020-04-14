@@ -5,9 +5,8 @@ class MakeBrace(Scene):
         dot = Dot([0,0,0])
         dot2= Dot([2,1,0])
         line = Line(dot,dot2)
-        b=Brace(VGroup(dot,dot2),UP)
+        b=Brace(VGroup(dot,dot2),direction= line.copy().rotate(PI/2).get_unit_vector())
         eq_text = b.get_tex("x-x_1")
-
         self.add(dot,dot2)
         self.add(line,b, eq_text)
         self.wait()

@@ -37,7 +37,7 @@ class SuccessiveComplexMultiplications(ComplexMultiplication):
             "x_radius" : shrink_factor*FRAME_X_RADIUS,
             "y_radius" : shrink_factor*FRAME_Y_RADIUS,
         }
-        ComplexMultiplication.construct(self, multipliers[0], **plane_config)
+        ComplexMultiplication.construct
 
         one_dot = self.draw_dot("1", 1, True)
         one_dot_copy = deepcopy(one_dot)
@@ -99,7 +99,7 @@ class ComplexDivision(ComplexMultiplication):
     ]
 
     def construct(self, num):
-        ComplexMultiplication.construct(self, 1./num)
+        ComplexMultiplication.construct
         self.draw_dot("1", 1, False),
         self.draw_dot("z", num, True)
         self.apply_multiplication()
@@ -110,7 +110,7 @@ class ConjugateDivisionExample(ComplexMultiplication):
     ]
 
     def construct(self, num):
-        ComplexMultiplication.construct(self, np.conj(num), radius = 2.5*FRAME_X_RADIUS)
+        ComplexMultiplication.construct
         self.draw_dot("1", 1, True)
         self.draw_dot("\\bar z", self.multiplier)
         self.apply_multiplication()

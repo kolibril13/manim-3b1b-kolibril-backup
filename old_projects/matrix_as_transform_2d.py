@@ -57,7 +57,7 @@ class ShowMultiplication(NumberLineScene):
         if abs(num) < 1:
             config["numerical_radius"] = FRAME_X_RADIUS/num
 
-        NumberLineScene.construct(self, **config)
+        NumberLineScene.construct
         if show_original_line:
             self.copy_original_line()
         self.wait()
@@ -118,7 +118,7 @@ class ExamplesOfNonlinearOneDimensionalTransforms(NumberLineScene):
             "stroke_width" : 2*DEFAULT_STROKE_WIDTH,
             "density" : 5*DEFAULT_POINT_DENSITY_1D,
         }
-        NumberLineScene.construct(self, **config)
+        NumberLineScene.construct
         words = TextMobject(explanation).set_color(LIGHT_RED)
         words.next_to(self.nonlinear, DOWN, buff = 0.5)
         self.add(words)
@@ -147,7 +147,7 @@ class ShowTwoThenThree(ShowMultiplication):
             "stroke_width" : 2*DEFAULT_STROKE_WIDTH,
             "density" : 6*DEFAULT_POINT_DENSITY_1D,
         }
-        NumberLineScene.construct(self, **config)
+        NumberLineScene.construct
         self.copy_original_line()
         self.show_multiplication(2)
         self.wait()

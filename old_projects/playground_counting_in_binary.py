@@ -84,7 +84,7 @@ class EdgeDetection(SceneFromVideo):
 
     def construct(self, filename, t1, t2):
         path = os.path.join(VIDEO_DIR, filename)
-        SceneFromVideo.construct(self, path)
+        SceneFromVideo.construct
         self.apply_gaussian_blur()
         self.apply_edge_detection(t1, t2)
 
@@ -92,7 +92,7 @@ class BufferedCounting(SceneFromVideo):
     def construct(self):
         path = os.path.join(VIDEO_DIR, "CountingInBinary.m4v")
         time_range = (3, 42)
-        SceneFromVideo.construct(self, path, time_range = time_range)
+        SceneFromVideo.construct
         self.buffer_pixels(spreads = (3, 2))
         # self.make_all_black_or_white()
 
@@ -131,7 +131,7 @@ class ClearLeftSide(SceneFromVideo):
 
     def construct(self, scenename):
         path = os.path.join(VIDEO_DIR, MOVIE_PREFIX, scenename + ".mp4")
-        SceneFromVideo.construct(self, path)
+        SceneFromVideo.construct
         self.set_color_region_over_time_range(
             Region(lambda x, y : x < -1, shape = self.shape)
         )
@@ -149,7 +149,7 @@ class DraggedPixels(SceneFromVideo):
 
     def construct(self, video):
         path = os.path.join(VIDEO_DIR, MOVIE_PREFIX, video+".mp4")
-        SceneFromVideo.construct(self, path)
+        SceneFromVideo.construct
         self.drag_pixels()
 
     def drag_pixels(self, num_frames_to_drag_over = 5):
@@ -166,7 +166,7 @@ class DraggedPixels(SceneFromVideo):
 class SaveEachNumber(SceneFromVideo):
     def construct(self):
         path = os.path.join(VIDEO_DIR, MOVIE_PREFIX, "ClearLeftSideBufferedCounting.mp4")
-        SceneFromVideo.construct(self, path)
+        SceneFromVideo.construct
         for count in COUNT_TO_FRAME_NUM:
             path = os.path.join(
                 VIDEO_DIR, MOVIE_PREFIX, "images",
@@ -185,7 +185,7 @@ class ShowCounting(SceneFromVideo):
 
     def construct(self, filename):
         path = os.path.join(VIDEO_DIR, MOVIE_PREFIX, filename + ".mp4")
-        SceneFromVideo.construct(self, path)
+        SceneFromVideo.construct
         total_time = len(self.frames)*self.frame_duration
         for count in range(32):
             print(count)
@@ -209,7 +209,7 @@ class ShowFrameNum(SceneFromVideo):
 
     def construct(self, filename):
         path = os.path.join(VIDEO_DIR, MOVIE_PREFIX, filename+".mp4")
-        SceneFromVideo.construct(self, path)
+        SceneFromVideo.construct
         for frame, count in zip(self.frames, it.count()):
             print(count + "of" + len(self.frames))
             mob = Mobject(*[

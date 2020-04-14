@@ -61,7 +61,7 @@ class PreferOtherProofDialogue(Scene):
 
 class IllustrateDuality(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_dual_graph()
 
         self.add(TextMobject("Duality").to_edge(UP))
@@ -98,7 +98,7 @@ class IllustrateDuality(GraphScene):
 
 class IntroduceGraph(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         tweaked_graph = deepcopy(self.graph)
         for index in 2, 4:
             tweaked_graph.vertices[index] += 2.8*RIGHT + 1.8*DOWN
@@ -156,7 +156,7 @@ class IntroduceGraph(GraphScene):
 
 class OldIntroduceGraphs(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.draw_vertices()        
         self.draw_edges()
         self.wait()
@@ -219,7 +219,7 @@ class PlanarGraphDefinition(Scene):
 class TerminologyFromPolyhedra(GraphScene):
     args_list = [(CubeGraph(),)]
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         rot_kwargs = {
             "radians" : np.pi / 3,
             "run_time" : 5.0
@@ -273,7 +273,7 @@ class TerminologyFromPolyhedra(GraphScene):
 
 class ThreePiecesOfTerminology(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         terms = cycles, spanning_trees, dual_graphs = [
             TextMobject(phrase).shift(y*UP).to_edge()
             for phrase, y in [
@@ -330,7 +330,7 @@ class WalkingRandolph(GraphScene):
         GraphScene.__init__(self, graph, *args, **kwargs)
 
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         point_path = [self.points[i] for i in self.path]
         randy = Randolph()
         randy.scale(RANDOLPH_SCALE_FACTOR)
@@ -347,7 +347,7 @@ class WalkingRandolph(GraphScene):
 class PathExamples(GraphScene):
     args_list = [(SampleGraph(),)]
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         paths = [
             (1, 2, 4, 5, 6),
             (6, 7, 1, 3),
@@ -409,7 +409,7 @@ class IntroduceCycle(WalkingRandolph):
 
 class IntroduceRandolph(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         randy = Randolph().move_to((-3, 0, 0))
         name = TextMobject("Randolph")
         self.play(Transform(
@@ -423,7 +423,7 @@ class IntroduceRandolph(GraphScene):
 
 class DefineSpanningTree(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         randy = Randolph()
         randy.scale(RANDOLPH_SCALE_FACTOR).move_to(self.points[0])
         dollar_signs = TextMobject("\\$\\$")
@@ -481,7 +481,7 @@ class DefineSpanningTree(GraphScene):
 
 class NamingTree(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_spanning_tree()
         self.generate_treeified_spanning_tree()
         branches = self.spanning_tree.split()
@@ -517,7 +517,7 @@ class NamingTree(GraphScene):
 
 class DualGraph(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_dual_graph()
         self.add(TextMobject("Dual Graph").to_edge(UP).shift(2*LEFT))
         self.play(*[
@@ -534,7 +534,7 @@ class FacebookLogo(Scene):
 
 class FacebookGraph(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         account = ImageMobject("facebook_silhouette", invert = False)
         account.scale(0.05)
         logo = ImageMobject("facebook_logo", invert = False)
@@ -615,7 +615,7 @@ class ExamplesOfGraphs(GraphScene):
     def construct(self):
         buff = 0.5
         self.graph.vertices = [v + DOWN + RIGHT for v in self.graph.vertices]
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_regions()
         objects, notions = Mobject(*TextMobject(
             ["Objects \\quad\\quad ", "Thing that connects objects"]
@@ -755,7 +755,7 @@ class ExamplesOfGraphs(GraphScene):
 
 class DrawDualGraph(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_regions()
         self.generate_dual_graph()
         region_mobs = [
@@ -796,7 +796,7 @@ class DrawDualGraph(GraphScene):
 
 class EdgesAreTheSame(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_dual_graph()
         self.remove(*self.vertices)
         self.add(*self.dual_edges)
@@ -854,7 +854,7 @@ class ListOfCorrespondances(Scene):
 class CyclesCorrespondWithConnectedComponents(GraphScene):
     args_list = [(SampleGraph(),)]
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_regions()
         self.generate_dual_graph()
         cycle = [4, 2, 1, 5, 4]
@@ -901,7 +901,7 @@ class CyclesCorrespondWithConnectedComponents(GraphScene):
 class IntroduceMortimer(GraphScene):
     args_list = [(SampleGraph(),)]
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_dual_graph()
         self.generate_regions()
         randy = Randolph().shift(LEFT)
@@ -963,7 +963,7 @@ class IntroduceMortimer(GraphScene):
 class RandolphMortimerSpanningTreeGame(GraphScene):
     args_list = [(SampleGraph(),)]
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_spanning_tree()
         self.generate_dual_graph()
         self.generate_regions()
@@ -1013,7 +1013,7 @@ class RandolphMortimerSpanningTreeGame(GraphScene):
 class MortimerCannotTraverseCycle(GraphScene):
     args_list = [(SampleGraph(),)]
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_dual_graph()
         dual_cycle = DUAL_CYCLE
         trapped_points = [0, 1]
@@ -1087,7 +1087,7 @@ class TwoPropertiesOfSpanningTree(Scene):
 
 class DualSpanningTree(GraphScene):
     def construct(self):
-        GraphScene.construct(self)
+        GraphScene.construct
         self.generate_dual_graph()
         self.generate_spanning_tree()
         randy = Randolph()

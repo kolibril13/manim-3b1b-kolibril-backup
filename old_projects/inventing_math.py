@@ -1127,16 +1127,8 @@ class GeometricSum(RearrangeEquation):
         def end_transform(mob):
             return mob.scale(1.3).shift(DOWN)
 
-        RearrangeEquation.construct(
-            self, 
-            start_terms.split(" "), end_terms.split(" "), 
-            index_map, size = "\\large", 
-            path = counterclockwise_path(),
-            start_transform = start_transform,
-            end_transform = end_transform,
-            leave_start_terms = True,
-            transform_kwargs = {"run_time" : 2.0}
-        )
+        RearrangeEquation.construct
+
 
 class PointNineRepeating(RearrangeEquation):
     def construct(self):
@@ -1160,13 +1152,7 @@ class PointNineRepeating(RearrangeEquation):
             self.add(term)
             self.wait(0.5)
         self.clear()
-        RearrangeEquation.construct(
-            self,
-            start_terms,
-            end_terms,
-            index_map,
-            path = straight_path
-        )
+        RearrangeEquation.construct
 
 
 class PlugNumbersIntoRightside(Scene):
@@ -1241,15 +1227,8 @@ class PlugInNegativeOne(RearrangeEquation):
         ])
         index_map[-2] = -2
         index_map[-1] = -1
-        RearrangeEquation.construct(
-            self,
-            start_terms,
-            end_terms,
-            index_map,
-            path = straight_path,
-            start_transform = lambda m : m.shift(2*UP),
-            leave_start_terms = True,
-        )
+        RearrangeEquation.construct
+
 
 class PlugInTwo(RearrangeEquation):
     def construct(self):
@@ -1268,16 +1247,8 @@ class PlugInTwo(RearrangeEquation):
         ])
         index_map[-2] = -2
         index_map[-1] = -1
-        RearrangeEquation.construct(
-            self,
-            start_terms,
-            end_terms,
-            index_map,
-            size = "\\Huge",
-            path = straight_path,
-            start_transform = lambda m : m.shift(2*UP),
-            leave_start_terms = True,
-        )
+        RearrangeEquation.construct
+
 
 class ListPartialDivergentSums(Scene):
     args_list = [

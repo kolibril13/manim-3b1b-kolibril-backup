@@ -3,7 +3,7 @@ from manimlib.imports import *
 class Radiation(Scene):
     def construct(self):
         offset=3.5*LEFT
-        earth= ImageMobject("/hendrik_active/physics_material/climate/earth.png")
+        earth= ImageMobject("earth.png")
         heading= TextMobject(r"Earth radiation spectrum").to_edge(UP).scale(2)
         self.play(FadeInFromDown(heading))
         earth.shift(offset).scale(1.3)

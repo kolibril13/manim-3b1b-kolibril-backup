@@ -829,7 +829,7 @@ class SupposeThereIsASavant(Scene):
 
 class AllValuesBetween1And2(NumberLineScene):
     def construct(self):
-        NumberLineScene.construct(self)
+        NumberLineScene.construct
         irrational = 1.2020569031595942        
         cont_frac = [1, 4, 1, 18, 1, 1, 1, 4, 1, 9, 9, 2, 1, 1, 1, 2]        
         one, two, irr = list(map(

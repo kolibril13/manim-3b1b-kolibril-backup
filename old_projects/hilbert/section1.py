@@ -37,7 +37,7 @@ class AboutSpaceFillingCurves(TransformOverIncreasingOrders):
         self.bubble = ThoughtBubble().ingest_submobjects()
         self.bubble.scale(1.5)
 
-        TransformOverIncreasingOrders.construct(self, FlowSnake, 7)
+        TransformOverIncreasingOrders.construct
         self.play(Transform(self.curve, self.bubble))
         self.show_infinite_objects()
         self.pose_question()

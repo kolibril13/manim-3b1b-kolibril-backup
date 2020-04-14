@@ -115,10 +115,27 @@ NO_SCENE_MESSAGE = """
 """
 
 # There might be other configuration than pixel shape later...
+# PRODUCTION_QUALITY_CAMERA_CONFIG = {
+#     "pixel_height": 1440,
+#     "pixel_width": 2560,
+#     "frame_rate": 60,
+# }
 PRODUCTION_QUALITY_CAMERA_CONFIG = {
-    "pixel_height": 1440,
-    "pixel_width": 2560,
+    "pixel_height": 1080,
+    "pixel_width": 1920,
+    "frame_rate": 50,
+}
+
+HIGH_QUALITY_CAMERA_CONFIG = {
+    "pixel_height": 1080,
+    "pixel_width": 1920,
     "frame_rate": 60,
+}
+
+MEDIUM_QUALITY_CAMERA_CONFIG = {
+    "pixel_height": 720,
+    "pixel_width": 1280,
+    "frame_rate": 30,
 }
 
 HIGH_QUALITY_CAMERA_CONFIG = {
