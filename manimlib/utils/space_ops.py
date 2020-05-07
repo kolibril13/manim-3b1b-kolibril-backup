@@ -149,6 +149,7 @@ def angle_between_vectors(v1, v2):
     ))
 
 
+
 def project_along_vector(point, vector):
     matrix = np.identity(3) - np.outer(vector, vector)
     return np.dot(point, matrix.T)
