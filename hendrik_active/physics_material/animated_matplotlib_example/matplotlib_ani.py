@@ -1,4 +1,4 @@
-from manimlib.imports import *
+nfrom manimlib.imports import *
 import numpy as np
 import matplotlib.pyplot as plt
 def make_plot():
