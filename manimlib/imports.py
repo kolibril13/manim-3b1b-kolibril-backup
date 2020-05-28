@@ -105,3 +105,4 @@ import math
 
 from PIL import Image
 from colour import Color
+from pathlib import Path
