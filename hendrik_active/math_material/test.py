@@ -21,7 +21,7 @@ class ExampleScene(Scene):
         dot2.update_dot()
         self.add(dot)
         self.wait(1)
-        self.play(Transform(dot, dot2), rate_func=linear)
+        self.play(Transform(dot, dot2), rate_func=smooth)
         self.wait(1)
 
 if __name__ == "__main__":
