@@ -6,7 +6,7 @@ VIDEO_DIR = ""
 VIDEO_OUTPUT_DIR = ""
 TEX_DIR = ""
 TEXT_DIR = ""
-
+TEX_TEMPLATE = None
 
 def initialize_directories(config):
     global MEDIA_DIR
