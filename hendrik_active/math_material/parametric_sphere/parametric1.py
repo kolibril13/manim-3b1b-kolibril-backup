@@ -27,7 +27,7 @@ class DrawScene(ThreeDScene):
         dot.add_updater(lambda m: m.move_to(func.get_end()))
         func.fade(1)
         self.add(dot)
-        text = TexMobject(r" S_1(",r"t",r")= R \left( \begin{array}{c} cos(\omega t) \\ sin(\omega t)\\ 0 \end{array} \right)+ \left( \begin{array}{c} 0 \\ 0\\ 1 \end{array} \right) ")
+        text = TexMobject(r" S_1(",r"t",r")= R \left( \begin{array}{c} \cos(\omega t) \\ \sin(\omega t)\\ 0 \end{array} \right)+ \left( \begin{array}{c} 0 \\ 0\\ 1 \end{array} \right) ")
         text.to_corner(LEFT).shift(3.5*LEFT)
         text2 = text.copy()
         text[1].set_color(BLUE)
@@ -50,8 +50,7 @@ class DrawScene(ThreeDScene):
 
 
 if __name__ == "__main__":
-    module_name = os.path.basename(__file__)
-    command_A = "manim -p   -c '#2B2B2B' --video_dir ~/Downloads/  "
-    command_B = module_name + " " + "DrawScene"
+    manim_main = Path.home() / "projects/manim/manim.py"
+    command_A =   f"{manim_main}   -p -c '#2B2B2B' --video_dir ~/Downloads/  "
+    command_B = f"{Path(__file__).resolve()}   "
     os.system(command_A + command_B)
-
