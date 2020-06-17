@@ -19,7 +19,7 @@ class ExampleScene(Scene):
         dot = MyDotGrid()
         dot2 = MyDotGrid()
         dot2.update_dot()
-        self.add(dot)
+        self.add(dot.set_color(RED))
         self.wait(1)
         self.play(Transform(dot, dot2), rate_func=smooth)
         self.wait(1)
