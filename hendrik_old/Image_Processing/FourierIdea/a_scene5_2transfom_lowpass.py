@@ -61,8 +61,9 @@ class Scene5RealImageTransformHigh(ThreeDScene):
 
 
 
+
 if __name__ == "__main__":
-    module_name = os.path.basename(__file__)
-    command_A = "manim   -p   -c '#1C758A' --video_dir ~/Downloads/  "
-    command_B = module_name +" " + scene
+    manim_main = Path.home() / "projects/manim/manim.py"
+    command_A =   f"{manim_main}   -p -s -c '#2B2B2B' --video_dir ~/Downloads/  "
+    command_B = f"{Path(__file__).resolve()}   "
     os.system(command_A + command_B)

@@ -1,6 +1,6 @@
 from hendrik_old.Image_Processing.FourierIdea.Realspace import *
 from hendrik_old.Image_Processing.FourierIdea.FourierMathJuggling import *
-
+from hendrik_old.Image_Processing.FourierIdea.KSpace import *
 linear_step_func=StepFunctions.linear_step_func
 
 

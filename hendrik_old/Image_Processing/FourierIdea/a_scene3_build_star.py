@@ -1,5 +1,5 @@
 from hendrik_old.Image_Processing.FourierIdea.ImProImports import \
-    FourierMathJuggling,Image_coordinate_system, KSpace, Realspace
+    FourierMathJuggling,Image_coordinate_system, Realspace , KSpace
 from manimlib.imports import *
 
 global k_plane_size
@@ -65,8 +65,9 @@ class Scene3BuildStar(ThreeDScene):  # with real plane on the right
                   rate_func=linear, run_time=10)
 
 
+
 if __name__ == "__main__":
-    module_name = os.path.basename(__file__)
-    command_A = "manim  -i  -p  -c '#1C758A' --video_dir ~/Downloads/  "
-    command_B = module_name +" " + scene
+    manim_main = Path.home() / "projects/manim/manim.py"
+    command_A =   f"{manim_main}   -p -s -c '#2B2B2B' --video_dir ~/Downloads/  "
+    command_B = f"{Path(__file__).resolve()}   "
     os.system(command_A + command_B)
